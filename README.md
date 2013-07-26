@@ -1,6 +1,5 @@
-This repo contains the Homebrew formula I use to build [PJSIP][1] on
-OS X, for use with [Asterisk][2].
+This repo contains the Homebrew formulas I use for my [Asterisk][ast] dev
+machine. This is pretty much a few packages which, for one reason or
+another, aren't the best fit for going into Homebrew itself.
 
-
- [1]: http://www.pjsip.org/
- [2]: http://asterisk.org/
+ [ast]: http://asterisk.org/
