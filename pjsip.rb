@@ -1,16 +1,14 @@
 require 'formula'
 
-# Documentation: https://github.com/mxcl/homebrew/wiki/Formula-Cookbook
-# PLEASE REMOVE ALL GENERATED COMMENTS BEFORE SUBMITTING YOUR PULL REQUEST!
-
 class Pjsip < Formula
   homepage 'http://www.pjsip.org/'
   url 'http://www.pjsip.org/release/2.1/pjproject-2.1.tar.bz2'
   sha1 '244884fb900594104792c431946384e0fedc9560'
 
+  depends_on 'libgsm'
+  depends_on 'openssl'
   depends_on 'portaudio'
   depends_on 'speex'
-  depends_on 'openssl'
   depends_on 'srtp'
 
   def patches
@@ -23,11 +21,16 @@ class Pjsip < Formula
 
     openssl = Formula.factory('openssl')
 
-    system "./configure", "--prefix=#{prefix}", "--with-external-speex",
-                          "--disable-gsm-codec", "--with-external-srtp",
-                          "--disable-sound", "--disable-resample",
-                          "--enable-shared", "--with-external-pa",
-                          "--with-ssl=#{openssl.opt_prefix}"
+    system "./configure", "--prefix=#{prefix}",
+                          "--with-ssl=#{openssl.opt_prefix}",
+                          "--disable-resample",
+                          "--disable-sound",
+                          "--disable-video",
+                          "--enable-shared",
+                          "--with-external-gsm",
+                          "--with-external-pa",
+                          "--with-external-speex",
+                          "--with-external-srtp"
 
     system "make", "all", "install"
   end
@@ -38,7 +41,7 @@ class Pjsip < Formula
 end
 
 __END__
-git diff pjproject-2.1 56841465d7418a7d0997e4e5648e35f1898e890c
+$ git diff pjproject-2.1 pjproject-2.1-digium1-18-gb7e5854
 
 diff --git a/.gitignore b/.gitignore
 new file mode 100644
@@ -55,18 +58,48 @@ index 0000000..5ac6e37
 +pjlib/include/pj/config_site.h
 +pjsip/include/pjsip/sip_autoconf.h
 diff --git a/Makefile b/Makefile
-index e33472f..9b08b8d 100644
+index e33472f..72310ae 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -109,7 +109,7 @@ prefix = $(ac_prefix)
+@@ -105,17 +105,29 @@ pjsip-test: pjsip/bin/pjsip-test-$(TARGET_NAME)
+ pjsua-test:
+ 	cd tests/pjsua && python runall.py
  
+-prefix = $(ac_prefix)
+-
  install:
- 	mkdir -p $(DESTDIR)$(prefix)/lib
+-	mkdir -p $(DESTDIR)$(prefix)/lib
 -	cp -f $(APP_LIB_FILES) $(DESTDIR)$(prefix)/lib/
-+	cp -af $(APP_LIB_FILES) $(DESTDIR)$(prefix)/lib/
- 	mkdir -p $(DESTDIR)$(prefix)/include
+-	mkdir -p $(DESTDIR)$(prefix)/include
++	mkdir -p $(DESTDIR)$(libdir)/
++	cp -af $(APP_LIB_FILES) $(DESTDIR)$(libdir)/
++	mkdir -p $(DESTDIR)$(includedir)/
  	for d in pjlib pjlib-util pjnath pjmedia pjsip; do \
- 		cp -RLf $$d/include/* $(DESTDIR)$(prefix)/include/; \
+-		cp -RLf $$d/include/* $(DESTDIR)$(prefix)/include/; \
++		cp -RLf $$d/include/* $(DESTDIR)$(includedir)/; \
+ 	done
+-	mkdir -p $(DESTDIR)$(prefix)/lib/pkgconfig
+-	sed -e "s!@PREFIX@!$(DESTDIR)$(prefix)!" libpjproject.pc.in | \
++	mkdir -p $(DESTDIR)$(libdir)/pkgconfig
++	sed -e "s!@PREFIX@!$(prefix)!" libpjproject.pc.in | \
++		sed -e "s!@INCLUDEDIR@!$(includedir)!" | \
++		sed -e "s!@LIBDIR@!$(libdir)!" | \
+ 		sed -e "s/@PJ_VERSION@/$(PJ_VERSION)/" | \
+ 		sed -e "s!@PJ_LDLIBS@!$(PJ_LDLIBS)!" | \
+-		sed -e "s!@PJ_INSTALL_CFLAGS@!$(PJ_INSTALL_CFLAGS)!" > $(DESTDIR)/$(prefix)/lib/pkgconfig/libpjproject.pc
++		sed -e "s!@PJ_INSTALL_CFLAGS@!$(PJ_INSTALL_CFLAGS)!" > $(DESTDIR)/$(libdir)/pkgconfig/libpjproject.pc
++
++uninstall:
++	$(RM) $(DESTDIR)$(libdir)/pkgconfig/libpjproject.pc
++	-rmdir $(DESTDIR)$(libdir)/pkgconfig 2> /dev/null
++	for d in pjlib pjlib-util pjnath pjmedia pjsip; do \
++		for f in $$d/include/*; do \
++			$(RM) -r "$(DESTDIR)$(includedir)/`basename $$f`"; \
++		done; \
++	done
++	-rmdir $(DESTDIR)$(includedir) 2> /dev/null
++	$(RM) $(addprefix $(DESTDIR)$(libdir)/,$(notdir $(APP_LIB_FILES)))
++	-rmdir $(DESTDIR)$(libdir) 2> /dev/null
 diff --git a/aconfigure b/aconfigure
 index 33ed0be..1ea3ddb 100755
 --- a/aconfigure
@@ -2611,10 +2644,18 @@ index 9afce8d..75aa01b 100644
  AC_ARG_ENABLE(resample_dll,
  	      AC_HELP_STRING([--enable-resample-dll],
 diff --git a/build.mak.in b/build.mak.in
-index 5ea6e79..476c23d 100644
+index 5ea6e79..3e5215e 100644
 --- a/build.mak.in
 +++ b/build.mak.in
-@@ -16,18 +16,48 @@ export ac_prefix := @prefix@
+@@ -12,22 +12,55 @@ export CROSS_COMPILE := @ac_cross_compile@
+ export LINUX_POLL := @ac_linux_poll@ 
+ export SHLIB_SUFFIX := @ac_shlib_suffix@
+ 
+-export ac_prefix := @prefix@
++export prefix := @prefix@
++export exec_prefix := @exec_prefix@
++export includedir := @includedir@
++export libdir := @libdir@
  
  LIB_SUFFIX = $(TARGET_NAME).a
  
@@ -2669,7 +2710,7 @@ index 5ea6e79..476c23d 100644
  endif
  
  ifneq (@ac_no_gsm_codec@,1)
-@@ -35,8 +65,13 @@ ifeq (@ac_external_gsm@,1)
+@@ -35,8 +68,13 @@ ifeq (@ac_external_gsm@,1)
  # External GSM library
  APP_THIRD_PARTY_EXT += -lgsm
  else
@@ -2684,7 +2725,7 @@ index 5ea6e79..476c23d 100644
  endif
  endif
  
-@@ -44,19 +79,34 @@ ifneq (@ac_no_speex_codec@,1)
+@@ -44,19 +82,34 @@ ifneq (@ac_no_speex_codec@,1)
  ifeq (@ac_external_speex@,1)
  APP_THIRD_PARTY_EXT += -lspeex -lspeexdsp
  else
@@ -2722,7 +2763,7 @@ index 5ea6e79..476c23d 100644
  endif
  
  ifneq ($(findstring pa,@ac_pjmedia_snd@),)
-@@ -64,8 +114,13 @@ ifeq (@ac_external_pa@,1)
+@@ -64,8 +117,13 @@ ifeq (@ac_external_pa@,1)
  # External PA
  APP_THIRD_PARTY_EXT += -lportaudio
  else
@@ -2737,7 +2778,7 @@ index 5ea6e79..476c23d 100644
  endif
  endif
  
-@@ -122,20 +177,6 @@ export APP_LDFLAGS := -L$(PJDIR)/pjlib/lib\
+@@ -122,20 +180,6 @@ export APP_LDFLAGS := -L$(PJDIR)/pjlib/lib\
  	-L$(PJDIR)/third_party/lib\
  	$(PJ_VIDEO_LDFLAGS) \
  	@LDFLAGS@
@@ -2758,7 +2799,7 @@ index 5ea6e79..476c23d 100644
  export APP_LIB_FILES = $(PJ_DIR)/pjsip/lib/libpjsua-$(LIB_SUFFIX) \
  	$(PJ_DIR)/pjsip/lib/libpjsip-ua-$(LIB_SUFFIX) \
  	$(PJ_DIR)/pjsip/lib/libpjsip-simple-$(LIB_SUFFIX) \
-@@ -149,6 +190,59 @@ export APP_LIB_FILES = $(PJ_DIR)/pjsip/lib/libpjsua-$(LIB_SUFFIX) \
+@@ -149,6 +193,59 @@ export APP_LIB_FILES = $(PJ_DIR)/pjsip/lib/libpjsua-$(LIB_SUFFIX) \
  	$(APP_THIRD_PARTY_LIB_FILES) \
  	$(PJ_DIR)/pjlib/lib/libpj-$(LIB_SUFFIX)
  
@@ -2818,6 +2859,17 @@ index 5ea6e79..476c23d 100644
  # Here are the variabels to use if application is using the library
  # from within the source distribution
  export PJ_CC := $(APP_CC)
+@@ -162,8 +259,8 @@ export PJ_LIB_FILES := $(APP_LIB_FILES)
+ # And here are the variables to use if application is using the
+ # library from the install location (i.e. --prefix)
+ export PJ_INSTALL_DIR := @prefix@
+-export PJ_INSTALL_INC_DIR := $(PJ_INSTALL_DIR)/include
+-export PJ_INSTALL_LIB_DIR := $(PJ_INSTALL_DIR)/lib
++export PJ_INSTALL_INC_DIR := @includedir@
++export PJ_INSTALL_LIB_DIR := @libdir@
+ export PJ_INSTALL_CFLAGS := -I$(PJ_INSTALL_INC_DIR) -DPJ_AUTOCONF=1	@CFLAGS@
+ export PJ_INSTALL_CXXFLAGS := $(PJ_INSTALL_CFLAGS)
+ export PJ_INSTALL_LDFLAGS := -L$(PJ_INSTALL_LIB_DIR) $(APP_LDLIBS)
 diff --git a/build/cc-auto.mak.in b/build/cc-auto.mak.in
 index bc56567..2530e21 100644
 --- a/build/cc-auto.mak.in
@@ -2831,7 +2883,7 @@ index bc56567..2530e21 100644
  export LDOUT = -o 
  export RANLIB = @RANLIB@
 diff --git a/build/rules.mak b/build/rules.mak
-index 0d35c56..7b82735 100644
+index 0d35c56..781777a 100644
 --- a/build/rules.mak
 +++ b/build/rules.mak
 @@ -6,17 +6,22 @@ BINDIR = ../bin
@@ -2851,7 +2903,7 @@ index 0d35c56..7b82735 100644
 +SONAME = $($(APP)_SONAME)
 +
 +ifeq ($(SHLIB_SUFFIX),so)
-+SHLIB_OPT := -shared -Wl,-soname,$(SONAME)
++SHLIB_OPT := -shared -Wl,-soname,$(SHLIB)
 +else ifeq ($(SHLIB_SUFFIX),dylib)
 +SHLIB_OPT := -dynamiclib -undefined dynamic_lookup -flat_namespace
 +else
@@ -2873,10 +2925,9 @@ index 0d35c56..7b82735 100644
  
  print_bin: print_common
 -	@echo EXE=$(EXE)
--	@echo BINDIR=$(BINDIR)
--
 +	@echo EXE=$(subst /,$(HOST_PSEP),$(BINDIR)/$(EXE))
-+ 	@echo BINDIR=$(BINDIR)
+ 	@echo BINDIR=$(BINDIR)
+-
 + 
  print_lib: print_common
 -	@echo LIB=$(LIB)
@@ -2964,6 +3015,21 @@ index 0d35c56..7b82735 100644
  	$(subst @@,$(DEP_FILE),$(HOST_RM))
  ifeq ($(OS_NAME),linux-kernel)
  	rm -f ../lib/$(app).ko
+diff --git a/libpjproject.pc.in b/libpjproject.pc.in
+index 7cd4313..fb7c8b1 100644
+--- a/libpjproject.pc.in
++++ b/libpjproject.pc.in
+@@ -2,8 +2,8 @@
+ 
+ prefix=@PREFIX@
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
+-includedir=${prefix}/include
++libdir=@LIBDIR@
++includedir=@INCLUDEDIR@
+ 
+ Name: libpjproject
+ Description: Multimedia communication library
 diff --git a/pjlib-util/bin/.gitignore b/pjlib-util/bin/.gitignore
 new file mode 100644
 index 0000000..d6b7ef3
@@ -3312,6 +3378,84 @@ index 0000000..d6b7ef3
 @@ -0,0 +1,2 @@
 +*
 +!.gitignore
+diff --git a/pjlib/include/pj/compat/cc_armcc.h b/pjlib/include/pj/compat/cc_armcc.h
+index e21c4f8..884976a 100644
+--- a/pjlib/include/pj/compat/cc_armcc.h
++++ b/pjlib/include/pj/compat/cc_armcc.h
+@@ -43,6 +43,7 @@
+ #define PJ_THREAD_FUNC	
+ #define PJ_NORETURN		
+ #define PJ_ATTR_NORETURN	__attribute__ ((noreturn))
++#define PJ_ATTR_MAY_ALIAS	__attribute__ ((__may_alias__))
+ 
+ #define PJ_HAS_INT64		1
+ 
+diff --git a/pjlib/include/pj/compat/cc_codew.h b/pjlib/include/pj/compat/cc_codew.h
+index 06638b8..dc8bc80 100644
+--- a/pjlib/include/pj/compat/cc_codew.h
++++ b/pjlib/include/pj/compat/cc_codew.h
+@@ -39,6 +39,7 @@
+ #define PJ_THREAD_FUNC	
+ #define PJ_NORETURN		
+ #define PJ_ATTR_NORETURN	
++#define PJ_ATTR_MAY_ALIAS	
+ 
+ #define PJ_HAS_INT64		1
+ 
+diff --git a/pjlib/include/pj/compat/cc_gcc.h b/pjlib/include/pj/compat/cc_gcc.h
+index db56bbc..6cdacfc 100644
+--- a/pjlib/include/pj/compat/cc_gcc.h
++++ b/pjlib/include/pj/compat/cc_gcc.h
+@@ -53,11 +53,13 @@
+   typedef uint64_t		pj_uint64_t;
+   #define PJ_INLINE_SPECIFIER	static __inline
+   #define PJ_ATTR_NORETURN	
++  #define PJ_ATTR_MAY_ALIAS	
+ #else
+   typedef long long		pj_int64_t;
+   typedef unsigned long long	pj_uint64_t;
+   #define PJ_INLINE_SPECIFIER	static inline
+   #define PJ_ATTR_NORETURN	__attribute__ ((noreturn))
++  #define PJ_ATTR_MAY_ALIAS	__attribute__((__may_alias__))
+ #endif
+ 
+ #define PJ_INT64(val)		val##LL
+diff --git a/pjlib/include/pj/compat/cc_gcce.h b/pjlib/include/pj/compat/cc_gcce.h
+index fae3e7e..c9312b4 100644
+--- a/pjlib/include/pj/compat/cc_gcce.h
++++ b/pjlib/include/pj/compat/cc_gcce.h
+@@ -39,6 +39,7 @@
+ #define PJ_THREAD_FUNC	
+ #define PJ_NORETURN		
+ #define PJ_ATTR_NORETURN	__attribute__ ((noreturn))
++#define PJ_ATTR_MAY_ALIAS	__attribute__ ((__may_alias__))
+ 
+ #define PJ_HAS_INT64		1
+ 
+diff --git a/pjlib/include/pj/compat/cc_msvc.h b/pjlib/include/pj/compat/cc_msvc.h
+index dbd0fde..e1f4db0 100644
+--- a/pjlib/include/pj/compat/cc_msvc.h
++++ b/pjlib/include/pj/compat/cc_msvc.h
+@@ -68,6 +68,7 @@
+ #define PJ_THREAD_FUNC	
+ #define PJ_NORETURN		__declspec(noreturn)
+ #define PJ_ATTR_NORETURN	
++#define PJ_ATTR_MAY_ALIAS	
+ 
+ #define PJ_HAS_INT64	1
+ 
+diff --git a/pjlib/include/pj/compat/cc_mwcc.h b/pjlib/include/pj/compat/cc_mwcc.h
+index 35248a2..42b4d3b 100644
+--- a/pjlib/include/pj/compat/cc_mwcc.h
++++ b/pjlib/include/pj/compat/cc_mwcc.h
+@@ -39,6 +39,7 @@
+ #define PJ_THREAD_FUNC	
+ #define PJ_NORETURN		
+ #define PJ_ATTR_NORETURN	__attribute__ ((noreturn))
++#define PJ_ATTR_MAY_ALIAS	
+ 
+ #define PJ_HAS_INT64		1
+ 
 diff --git a/pjlib/include/pj/compat/os_darwinos.h b/pjlib/include/pj/compat/os_darwinos.h
 index a01dd16..ebb4260 100644
 --- a/pjlib/include/pj/compat/os_darwinos.h
@@ -3339,6 +3483,19 @@ index a01dd16..ebb4260 100644
  
  
  #endif	/* __PJ_COMPAT_OS_DARWINOS_H__ */
+diff --git a/pjlib/include/pj/list.h b/pjlib/include/pj/list.h
+index d64c2bf..880f58d 100644
+--- a/pjlib/include/pj/list.h
++++ b/pjlib/include/pj/list.h
+@@ -74,7 +74,7 @@ PJ_BEGIN_DECL
+ struct pj_list
+ {
+     PJ_DECL_LIST_MEMBER(void);
+-};
++} PJ_ATTR_MAY_ALIAS; /* may_alias avoids warning with gcc-4.4 -Wall -O2 */
+ 
+ 
+ /**
 diff --git a/pjlib/lib/.gitignore b/pjlib/lib/.gitignore
 new file mode 100644
 index 0000000..d6b7ef3
@@ -3920,6 +4077,119 @@ index ef161eb..84042dc 100644
  /**
   * @}
   */
+diff --git a/pjmedia/include/pjmedia/config.h b/pjmedia/include/pjmedia/config.h
+index b229eca..82398ac 100644
+--- a/pjmedia/include/pjmedia/config.h
++++ b/pjmedia/include/pjmedia/config.h
+@@ -653,6 +653,19 @@
+ #   define PJMEDIA_SDP_NEG_PREFER_REMOTE_CODEC_ORDER	1
+ #endif
+ 
++/**
++ * This specifies the behavior of the SDP negotiator when responding to an
++ * offer, whether it should answer with multiple formats or not.
++ *
++ * Note that this behavior can be changed during run-time by calling
++ * pjmedia_sdp_neg_set_allow_multiple_codecs().
++ *
++ * Default is 0 (to maintain backward compatibility)
++ */
++#ifndef PJMEDIA_SDP_NEG_ANSWER_MULTIPLE_CODECS
++#   define PJMEDIA_SDP_NEG_ANSWER_MULTIPLE_CODECS	0
++#endif
++
+ 
+ /**
+  * This specifies the maximum number of the customized SDP format
+diff --git a/pjmedia/include/pjmedia/sdp_neg.h b/pjmedia/include/pjmedia/sdp_neg.h
+index 74fcb16..fdc8b71 100644
+--- a/pjmedia/include/pjmedia/sdp_neg.h
++++ b/pjmedia/include/pjmedia/sdp_neg.h
+@@ -313,6 +313,22 @@ typedef struct pjmedia_sdp_neg pjmedia_sdp_neg;
+ 
+ 
+ /**
++ * Flags to be given to pjmedia_sdp_neg_modify_local_offer2().
++ */
++typedef enum pjmedia_mod_offer_flag
++{
++   /**
++    * Allow media type in the SDP to be changed.
++    * When generating a new offer, in the case that a media line doesn't match
++    * the active SDP, the new media line will be considered to replace the
++    * existing media at the same position.
++    */
++   PJMEDIA_SDP_NEG_ALLOW_MEDIA_CHANGE = 1
++
++} pjmedia_mod_offer_flag;
++
++
++/**
+  * Get the state string description of the specified state.
+  *
+  * @param state		Negotiator state.
+@@ -400,6 +416,21 @@ PJ_DECL(pj_status_t)
+ pjmedia_sdp_neg_set_prefer_remote_codec_order(pjmedia_sdp_neg *neg,
+ 					      pj_bool_t prefer_remote);
+ 
++/**
++ * This specifies the behavior of the SDP negotiator when responding to an
++ * offer, whether it should answer with multiple formats or not.
++ *
++ * By default, the value in PJMEDIA_SDP_NEG_ANSWER_MULTIPLE_CODECS will
++ * be used.
++ *
++ * @param neg       The SDP negotiator instance.
++ * @param answer_multiple If non-zero, the negotiator will respond with
++ *          multiple formats. If zero only a single format will be returned.
++ */
++PJ_DECL(pj_status_t)
++pjmedia_sdp_neg_set_answer_multiple_codecs(pjmedia_sdp_neg *neg,
++                          pj_bool_t answer_multiple);
++
+ 
+ /**
+  * Get SDP negotiator state.
+@@ -500,7 +531,8 @@ pjmedia_sdp_neg_get_neg_local( pjmedia_sdp_neg *neg,
+  * After calling this function, application can send the SDP as offer 
+  * to remote party, using signaling protocol such as SIP.
+  * The negotiator state will move to PJMEDIA_SDP_NEG_STATE_LOCAL_OFFER,
+- * where it waits for SDP answer from remote.
++ * where it waits for SDP answer from remote. See also
++ * #pjmedia_sdp_neg_modify_local_offer2()
+  *
+  * @param pool		Pool to allocate memory. The pool's lifetime needs
+  *			to be valid for the duration of the negotiator.
+@@ -516,6 +548,29 @@ pjmedia_sdp_neg_modify_local_offer( pj_pool_t *pool,
+ 				    const pjmedia_sdp_session *local);
+ 
+ /**
++ * Modify local session with a new SDP and treat this as a new offer. 
++ * This function can only be called in state PJMEDIA_SDP_NEG_STATE_DONE.
++ * After calling this function, application can send the SDP as offer 
++ * to remote party, using signaling protocol such as SIP.
++ * The negotiator state will move to PJMEDIA_SDP_NEG_STATE_LOCAL_OFFER,
++ * where it waits for SDP answer from remote.
++ *
++ * @param pool		Pool to allocate memory. The pool's lifetime needs
++ *			to be valid for the duration of the negotiator.
++ * @param neg		The SDP negotiator instance.
++ * @param flags         Bitmask from pjmedia_mod_offer_flag.
++ * @param local		The new local SDP.
++ *
++ * @return		PJ_SUCCESS on success, or the appropriate
++ *			error code.
++ */
++PJ_DECL(pj_status_t) 
++pjmedia_sdp_neg_modify_local_offer2( pj_pool_t *pool,
++				     pjmedia_sdp_neg *neg,
++                                     unsigned flags,
++				     const pjmedia_sdp_session *local);
++
++/**
+  * This function can only be called in PJMEDIA_SDP_NEG_STATE_DONE state.
+  * Application calls this function to retrieve currently active
+  * local SDP, and then send the SDP to remote as an offer. The negotiator
 diff --git a/pjmedia/lib/.gitignore b/pjmedia/lib/.gitignore
 new file mode 100644
 index 0000000..d6b7ef3
@@ -3928,6 +4198,219 @@ index 0000000..d6b7ef3
 @@ -0,0 +1,2 @@
 +*
 +!.gitignore
+diff --git a/pjmedia/src/pjmedia/sdp_neg.c b/pjmedia/src/pjmedia/sdp_neg.c
+index 61e6d93..9a5899d 100644
+--- a/pjmedia/src/pjmedia/sdp_neg.c
++++ b/pjmedia/src/pjmedia/sdp_neg.c
+@@ -33,6 +33,7 @@ struct pjmedia_sdp_neg
+ {
+     pjmedia_sdp_neg_state state;	    /**< Negotiator state.	     */
+     pj_bool_t		  prefer_remote_codec_order;
++    pj_bool_t         answer_with_multiple_codecs;
+     pj_bool_t		  has_remote_answer;
+     pj_bool_t		  answer_was_remote;
+ 
+@@ -114,6 +115,7 @@ PJ_DEF(pj_status_t) pjmedia_sdp_neg_create_w_local_offer( pj_pool_t *pool,
+ 
+     neg->state = PJMEDIA_SDP_NEG_STATE_LOCAL_OFFER;
+     neg->prefer_remote_codec_order = PJMEDIA_SDP_NEG_PREFER_REMOTE_CODEC_ORDER;
++    neg->answer_with_multiple_codecs = PJMEDIA_SDP_NEG_ANSWER_MULTIPLE_CODECS;
+     neg->initial_sdp = pjmedia_sdp_session_clone(pool, local);
+     neg->neg_local_sdp = pjmedia_sdp_session_clone(pool, local);
+ 
+@@ -183,6 +185,19 @@ PJ_DEF(pj_status_t) pjmedia_sdp_neg_set_prefer_remote_codec_order(
+ 
+ 
+ /*
++ * Set multiple codec answering.
++ */
++PJ_DEF(pj_status_t) pjmedia_sdp_neg_set_answer_multiple_codecs(
++                        pjmedia_sdp_neg *neg,
++                        pj_bool_t answer_multiple)
++{
++    PJ_ASSERT_RETURN(neg, PJ_EINVAL);
++    neg->answer_with_multiple_codecs = answer_multiple;
++    return PJ_SUCCESS;
++}
++
++
++/*
+  * Get SDP negotiator state.
+  */
+ PJ_DEF(pjmedia_sdp_neg_state) pjmedia_sdp_neg_get_state( pjmedia_sdp_neg *neg )
+@@ -276,6 +291,15 @@ PJ_DEF(pj_status_t) pjmedia_sdp_neg_modify_local_offer( pj_pool_t *pool,
+ 				    pjmedia_sdp_neg *neg,
+ 				    const pjmedia_sdp_session *local)
+ {
++    return pjmedia_sdp_neg_modify_local_offer2(pool, neg, 0, local);
++}
++
++PJ_DEF(pj_status_t) pjmedia_sdp_neg_modify_local_offer2(
++                                    pj_pool_t *pool,
++				    pjmedia_sdp_neg *neg,
++                                    unsigned flags,
++				    const pjmedia_sdp_session *local)
++{
+     pjmedia_sdp_session *new_offer;
+     pjmedia_sdp_session *old_offer;
+     char media_used[PJMEDIA_MAX_SDP_MEDIA];
+@@ -314,45 +338,63 @@ PJ_DEF(pj_status_t) pjmedia_sdp_neg_modify_local_offer( pj_pool_t *pool,
+     pj_strdup(pool, &new_offer->origin.addr_type,&old_offer->origin.addr_type);
+     pj_strdup(pool, &new_offer->origin.addr, &old_offer->origin.addr);
+ 
+-    /* Generating the new offer, in the case media lines doesn't match the
+-     * active SDP (e.g. current/active SDP's have m=audio and m=video lines, 
+-     * and the new offer only has m=audio line), the negotiator will fix 
+-     * the new offer by reordering and adding the missing media line with 
+-     * port number set to zero.
+-     */
+-    for (oi = 0; oi < old_offer->media_count; ++oi) {
+-	pjmedia_sdp_media *om;
+-	pjmedia_sdp_media *nm;
+-	unsigned ni; /* new offer media index */
+-	pj_bool_t found = PJ_FALSE;
+-
+-	om = old_offer->media[oi];
+-	for (ni = oi; ni < new_offer->media_count; ++ni) {
+-	    nm = new_offer->media[ni];
+-	    if (pj_strcmp(&nm->desc.media, &om->desc.media) == 0) {
+-		if (ni != oi) {
+-		    /* The same media found but the position unmatched to the 
+-		     * old offer, so let's put this media in the right place, 
+-		     * and keep the order of the rest.
+-		     */
+-		    pj_array_insert(new_offer->media,		 /* array    */
+-				    sizeof(new_offer->media[0]), /* elmt size*/
+-				    ni,				 /* count    */
+-				    oi,				 /* pos      */
+-				    &nm);			 /* new elmt */
+-		}
+-		found = PJ_TRUE;
+-		break;
++    if ((flags & PJMEDIA_SDP_NEG_ALLOW_MEDIA_CHANGE) == 0) {
++       /* Generating the new offer, in the case media lines doesn't match the
++        * active SDP (e.g. current/active SDP's have m=audio and m=video lines,
++        * and the new offer only has m=audio line), the negotiator will fix 
++        * the new offer by reordering and adding the missing media line with 
++        * port number set to zero.
++        */
++        for (oi = 0; oi < old_offer->media_count; ++oi) {
++	    pjmedia_sdp_media *om;
++	    pjmedia_sdp_media *nm;
++	    unsigned ni; /* new offer media index */
++	    pj_bool_t found = PJ_FALSE;
++
++	    om = old_offer->media[oi];
++	    for (ni = oi; ni < new_offer->media_count; ++ni) {
++	        nm = new_offer->media[ni];
++	        if (pj_strcmp(&nm->desc.media, &om->desc.media) == 0) {
++		    if (ni != oi) {
++		        /* The same media found but the position unmatched to
++                         * the old offer, so let's put this media in the right
++                         * place, and keep the order of the rest.
++		         */
++		        pj_array_insert(
++                            new_offer->media,		 /* array    */
++			    sizeof(new_offer->media[0]), /* elmt size*/
++			    ni,				 /* count    */
++		            oi,				 /* pos      */
++			    &nm);			 /* new elmt */
++		    }
++		    found = PJ_TRUE;
++		    break;
++	        }
+ 	    }
+-	}
+-	if (!found) {
+-	    pjmedia_sdp_media *m;
++	    if (!found) {
++	        pjmedia_sdp_media *m;
+ 
+-	    m = sdp_media_clone_deactivate(pool, om, om, local);
++	        m = sdp_media_clone_deactivate(pool, om, om, local);
++
++	        pj_array_insert(new_offer->media, sizeof(new_offer->media[0]),
++			        new_offer->media_count++, oi, &m);
++	    }
++        }
++    } else {
++        /* If media type change is allowed, the negotiator only needs to fix 
++         * the new offer by adding the missing media line(s) with port number
++         * set to zero.
++         */
++        for (oi = new_offer->media_count; oi < old_offer->media_count; ++oi) {
++            pjmedia_sdp_media *m;
++
++	    m = sdp_media_clone_deactivate(pool, old_offer->media[oi],
++                                           old_offer->media[oi], local);
+ 
+ 	    pj_array_insert(new_offer->media, sizeof(new_offer->media[0]),
+-			    new_offer->media_count++, oi, &m);
+-	}
++	                    new_offer->media_count++, oi, &m);
++
++        }
+     }
+ 
+     /* New_offer fixed */
+@@ -983,6 +1025,7 @@ static void apply_answer_symmetric_pt(pj_pool_t *pool,
+ /* Try to match offer with answer. */
+ static pj_status_t match_offer(pj_pool_t *pool,
+ 			       pj_bool_t prefer_remote_codec_order,
++                   pj_bool_t answer_with_multiple_codecs,
+ 			       const pjmedia_sdp_media *offer,
+ 			       const pjmedia_sdp_media *preanswer,
+ 			       const pjmedia_sdp_session *preanswer_sdp,
+@@ -1048,11 +1091,11 @@ static pj_status_t match_offer(pj_pool_t *pool,
+ 
+ 		master_has_codec = 1;
+ 
+-		/* We just need to select one codec. 
++		/* We just need to select one codec if not allowing multiple.
+ 		 * Continue if we have selected matching codec for previous 
+ 		 * payload.
+ 		 */
+-		if (found_matching_codec)
++		if (!answer_with_multiple_codecs && found_matching_codec)
+ 		    continue;
+ 
+ 		/* Find matching codec in local descriptor. */
+@@ -1092,7 +1135,7 @@ static pj_status_t match_offer(pj_pool_t *pool,
+ 		    is_codec = 0;
+ 		} else {
+ 		    master_has_codec = 1;
+-		    if (found_matching_codec)
++		    if (!answer_with_multiple_codecs && found_matching_codec)
+ 			continue;
+ 		    is_codec = 1;
+ 		}
+@@ -1250,6 +1293,7 @@ static pj_status_t match_offer(pj_pool_t *pool,
+ /* Create complete answer for remote's offer. */
+ static pj_status_t create_answer( pj_pool_t *pool,
+ 				  pj_bool_t prefer_remote_codec_order,
++                  pj_bool_t answer_with_multiple_codecs,
+ 				  const pjmedia_sdp_session *initial,
+ 				  const pjmedia_sdp_session *offer,
+ 				  pjmedia_sdp_session **p_answer)
+@@ -1299,7 +1343,7 @@ static pj_status_t create_answer( pj_pool_t *pool,
+                 pj_status_t status2;
+ 
+ 		/* See if it has matching codec. */
+-		status2 = match_offer(pool, prefer_remote_codec_order, 
++		status2 = match_offer(pool, prefer_remote_codec_order, answer_with_multiple_codecs,
+ 				      om, im, initial, &am);
+ 		if (status2 == PJ_SUCCESS) {
+ 		    /* Mark media as used. */
+@@ -1389,7 +1433,8 @@ PJ_DEF(pj_status_t) pjmedia_sdp_neg_negotiate( pj_pool_t *pool,
+     } else {
+ 	pjmedia_sdp_session *answer = NULL;
+ 
+-	status = create_answer(pool, neg->prefer_remote_codec_order, 
++	status = create_answer(pool, neg->prefer_remote_codec_order,
++                   neg->answer_with_multiple_codecs,
+ 			       neg->neg_local_sdp, neg->neg_remote_sdp,
+ 			       &answer);
+ 	if (status == PJ_SUCCESS) {
 diff --git a/pjmedia/src/pjmedia/transport_srtp.c b/pjmedia/src/pjmedia/transport_srtp.c
 index a661c37..bd0e9b6 100644
 --- a/pjmedia/src/pjmedia/transport_srtp.c
@@ -4676,6 +5159,18 @@ index 0000000..d6b7ef3
 @@ -0,0 +1,2 @@
 +*
 +!.gitignore
+diff --git a/pjsip/include/pjsip-ua/sip_inv.h b/pjsip/include/pjsip-ua/sip_inv.h
+index f9f38ca..0b2eacc 100644
+--- a/pjsip/include/pjsip-ua/sip_inv.h
++++ b/pjsip/include/pjsip-ua/sip_inv.h
+@@ -372,6 +372,7 @@ struct pjsip_inv_session
+     pjsip_role_e	 role;			    /**< Invite role.	    */
+     unsigned		 options;		    /**< Options in use.    */
+     pjmedia_sdp_neg	*neg;			    /**< Negotiator.	    */
++    unsigned             sdp_neg_flags;             /**< SDP neg flags.     */
+     pjsip_transaction	*invite_tsx;		    /**< 1st invite tsx.    */
+     pjsip_tx_data	*invite_req;		    /**< Saved invite req   */
+     pjsip_tx_data	*last_answer;		    /**< Last INVITE resp.  */
 diff --git a/pjsip/lib/.gitignore b/pjsip/lib/.gitignore
 new file mode 100644
 index 0000000..d6b7ef3
@@ -4684,6 +5179,73 @@ index 0000000..d6b7ef3
 @@ -0,0 +1,2 @@
 +*
 +!.gitignore
+diff --git a/pjsip/src/pjsip-ua/sip_inv.c b/pjsip/src/pjsip-ua/sip_inv.c
+index dec4ee5..76b760c 100644
+--- a/pjsip/src/pjsip-ua/sip_inv.c
++++ b/pjsip/src/pjsip-ua/sip_inv.c
+@@ -1758,9 +1758,10 @@ static pj_status_t inv_check_sdp_in_incoming_msg( pjsip_inv_session *inv,
+ 			  tsx->last_tx->msg->body->data;
+ 
+ 	    /* Feed the original offer to negotiator */
+-	    status = pjmedia_sdp_neg_modify_local_offer(inv->pool_prov, 
+-							inv->neg,
+-						        reoffer_sdp);
++	    status = pjmedia_sdp_neg_modify_local_offer2(inv->pool_prov, 
++							 inv->neg,
++                                                         inv->sdp_neg_flags,
++						         reoffer_sdp);
+ 	    if (status != PJ_SUCCESS) {
+ 		PJ_LOG(1,(inv->obj_name, "Error updating local offer for "
+ 			  "forked 2xx response (err=%d)", status));
+@@ -2120,8 +2121,9 @@ PJ_DEF(pj_status_t) pjsip_inv_set_local_sdp(pjsip_inv_session *inv,
+         {
+             status = pjsip_inv_set_sdp_answer(inv, sdp);
+         }  else if (neg_state == PJMEDIA_SDP_NEG_STATE_DONE) {
+-            status = pjmedia_sdp_neg_modify_local_offer(inv->pool,
+-                                                        inv->neg, sdp);
++            status = pjmedia_sdp_neg_modify_local_offer2(inv->pool, inv->neg,
++                                                         inv->sdp_neg_flags,
++                                                         sdp);
+         } else
+             return PJMEDIA_SDPNEG_EINSTATE;
+     } else {
+@@ -2588,9 +2590,9 @@ PJ_DEF(pj_status_t) pjsip_inv_reinvite( pjsip_inv_session *inv,
+ 		break;
+ 
+ 	    case PJMEDIA_SDP_NEG_STATE_DONE:
+-		status = pjmedia_sdp_neg_modify_local_offer(inv->pool_prov,
+-							    inv->neg,
+-							    new_offer);
++		status = pjmedia_sdp_neg_modify_local_offer2(
++                             inv->pool_prov, inv->neg,
++                             inv->sdp_neg_flags, new_offer);
+ 		if (status != PJ_SUCCESS)
+ 		    goto on_return;
+ 		break;
+@@ -2650,8 +2652,8 @@ PJ_DEF(pj_status_t) pjsip_inv_update (	pjsip_inv_session *inv,
+ 	/* Notify negotiator about the new offer. This will fix the offer
+ 	 * with correct SDP origin.
+ 	 */
+-	status = pjmedia_sdp_neg_modify_local_offer(inv->pool_prov, inv->neg,
+-						    offer);
++	status = pjmedia_sdp_neg_modify_local_offer2(inv->pool_prov, inv->neg,
++						     inv->sdp_neg_flags, offer);
+ 	if (status != PJ_SUCCESS)
+ 	    goto on_error;
+ 
+@@ -4320,9 +4322,9 @@ static void inv_on_state_confirmed( pjsip_inv_session *inv, pjsip_event *e)
+ 			 * fix the offer with correct SDP origin.
+ 			 */
+ 			status = 
+-			    pjmedia_sdp_neg_modify_local_offer(inv->pool_prov,
+-							       inv->neg,
+-							       sdp);
++			    pjmedia_sdp_neg_modify_local_offer2(
++                                inv->pool_prov, inv->neg,
++                                inv->sdp_neg_flags, sdp);
+ 
+ 			/* Retrieve the "fixed" offer from negotiator */
+ 			if (status==PJ_SUCCESS) {
 diff --git a/third_party/build/Makefile b/third_party/build/Makefile
 index 36d8061..e1cb0da 100644
 --- a/third_party/build/Makefile
@@ -4740,6 +5302,14 @@ index 6059030..d0e7596 100644
  
  clean print_lib:
  	$(MAKE) -f $(RULES_MAK) APP=G7221_CODEC app=libg7221codec $@
+diff --git a/third_party/build/g7221/output/.gitignore b/third_party/build/g7221/output/.gitignore
+new file mode 100644
+index 0000000..d6b7ef3
+--- /dev/null
++++ b/third_party/build/g7221/output/.gitignore
+@@ -0,0 +1,2 @@
++*
++!.gitignore
 diff --git a/third_party/build/gsm/Makefile b/third_party/build/gsm/Makefile
 index a265076..0b94998 100644
 --- a/third_party/build/gsm/Makefile
@@ -4832,6 +5402,14 @@ index 50b4ab7..39ac6b2 100644
  
  clean print_lib:
  	$(MAKE) -f $(RULES_MAK) APP=ILBC app=libilbccodec $@
+diff --git a/third_party/build/ilbc/output/.gitignore b/third_party/build/ilbc/output/.gitignore
+new file mode 100644
+index 0000000..d6b7ef3
+--- /dev/null
++++ b/third_party/build/ilbc/output/.gitignore
+@@ -0,0 +1,2 @@
++*
++!.gitignore
 diff --git a/third_party/build/milenage/Makefile b/third_party/build/milenage/Makefile
 index 094ddea..18a48b9 100644
 --- a/third_party/build/milenage/Makefile
