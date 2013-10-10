@@ -21,6 +21,8 @@ class Pjsip < Formula
 
     openssl = Formula.factory('openssl')
 
+    # Hack to disable opencore
+    ENV['enable_opencore_amr'] = 'no'
     system "./configure", "--prefix=#{prefix}",
                           "--with-ssl=#{openssl.opt_prefix}",
                           "--disable-resample",
