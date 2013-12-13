@@ -1,6 +1,6 @@
 require 'formula'
 
-class Pjsip < Formula
+class PjsipAsterisk < Formula
   homepage 'http://www.pjsip.org/'
   url 'http://www.pjsip.org/release/2.1/pjproject-2.1.tar.bz2'
   sha1 '244884fb900594104792c431946384e0fedc9560'
@@ -43,8 +43,7 @@ class Pjsip < Formula
 end
 
 __END__
-$ git diff pjproject-2.1 pjproject-2.1-digium1-18-gb7e5854
-
+$ git diff pjproject-2.1 pjproject-2.1-digium1-21-gde17f0e
 diff --git a/.gitignore b/.gitignore
 new file mode 100644
 index 0000000..5ac6e37
@@ -3498,6 +3497,25 @@ index d64c2bf..880f58d 100644
  
  
  /**
+diff --git a/pjlib/include/pj/ssl_sock.h b/pjlib/include/pj/ssl_sock.h
+index a81b7d9..eb9428f 100644
+--- a/pjlib/include/pj/ssl_sock.h
++++ b/pjlib/include/pj/ssl_sock.h
+@@ -711,6 +711,14 @@ typedef struct pj_ssl_sock_param
+     pj_str_t server_name;
+ 
+     /**
++     * Specify if SO_REUSEADDR should be used for listening socket. This
++     * option will only be used with accept() operation.
++     *
++     * Default is PJ_FALSE.
++     */
++    pj_bool_t reuse_addr;
++
++    /**
+      * QoS traffic type to be set on this transport. When application wants
+      * to apply QoS tagging to the transport, it's preferable to set this
+      * field rather than \a qos_param fields since this is more portable.
 diff --git a/pjlib/lib/.gitignore b/pjlib/lib/.gitignore
 new file mode 100644
 index 0000000..d6b7ef3
@@ -3549,7 +3567,7 @@ index b9044b2..0d4c8a6 100644
      pj_atexit(&pool_buf_cleanup);
  
 diff --git a/pjlib/src/pj/ssl_sock_ossl.c b/pjlib/src/pj/ssl_sock_ossl.c
-index 4b1d0a7..483c3e1 100644
+index 4b1d0a7..17d7609 100644
 --- a/pjlib/src/pj/ssl_sock_ossl.c
 +++ b/pjlib/src/pj/ssl_sock_ossl.c
 @@ -614,8 +614,8 @@ static pj_status_t create_ssl(pj_ssl_sock_t *ssock)
@@ -3572,6 +3590,25 @@ index 4b1d0a7..483c3e1 100644
  
      /* Ticket #1573: Don't hold mutex while calling PJLIB socket send(). */
      pj_lock_release(ssock->write_mutex);
+@@ -2382,6 +2382,18 @@ PJ_DEF(pj_status_t) pj_ssl_sock_start_accept (pj_ssl_sock_t *ssock,
+     if (status != PJ_SUCCESS)
+ 	goto on_error;
+ 
++    /* Apply SO_REUSEADDR */
++    if (ssock->param.reuse_addr) {
++	int enabled = 1;
++	status = pj_sock_setsockopt(ssock->sock, pj_SOL_SOCKET(),
++				    pj_SO_REUSEADDR(),
++				    &enabled, sizeof(enabled));
++	if (status != PJ_SUCCESS) {
++	    PJ_PERROR(4,(ssock->pool->obj_name, status,
++		         "Warning: error applying SO_REUSEADDR"));
++	}
++    }
++
+     /* Apply QoS, if specified */
+     status = pj_sock_apply_qos2(ssock->sock, ssock->param.qos_type,
+ 				&ssock->param.qos_params, 2, 
 diff --git a/pjmedia/bin/.gitignore b/pjmedia/bin/.gitignore
 new file mode 100644
 index 0000000..d6b7ef3
@@ -5173,6 +5210,99 @@ index f9f38ca..0b2eacc 100644
      pjsip_transaction	*invite_tsx;		    /**< 1st invite tsx.    */
      pjsip_tx_data	*invite_req;		    /**< Saved invite req   */
      pjsip_tx_data	*last_answer;		    /**< Last INVITE resp.  */
+diff --git a/pjsip/include/pjsip/sip_config.h b/pjsip/include/pjsip/sip_config.h
+index bde0777..4913617 100644
+--- a/pjsip/include/pjsip/sip_config.h
++++ b/pjsip/include/pjsip/sip_config.h
+@@ -523,6 +523,24 @@ PJ_INLINE(pjsip_cfg_t*) pjsip_cfg(void)
+ 
+ 
+ /**
++ * Specify whether TCP listener should use SO_REUSEADDR option. This constant
++ * will be used as the default value for the "reuse_addr" field in the
++ * pjsip_tcp_transport_cfg structure.
++ *
++ * Default is FALSE on Windows and TRUE on non-Windows.
++ *
++ * @see PJSIP_TLS_TRANSPORT_REUSEADDR
++ */
++#ifndef PJSIP_TCP_TRANSPORT_REUSEADDR
++# if defined(PJ_WIN32) && PJ_WIN32
++#   define PJSIP_TCP_TRANSPORT_REUSEADDR	0
++# else
++#   define PJSIP_TCP_TRANSPORT_REUSEADDR	1
++# endif
++#endif
++
++
++/**
+  * Set the interval to send keep-alive packet for TCP transports.
+  * If the value is zero, keep-alive will be disabled for TCP.
+  *
+@@ -630,6 +648,21 @@ PJ_INLINE(pjsip_cfg_t*) pjsip_cfg(void)
+ #endif
+ 
+ 
++/**
++ * Specify whether TLS listener should use SO_REUSEADDR option.
++ *
++ * Default is FALSE on Windows and TRUE on non-Windows.
++ *
++ * @see PJSIP_TCP_TRANSPORT_REUSEADDR
++ */
++#ifndef PJSIP_TLS_TRANSPORT_REUSEADDR
++# if defined(PJ_WIN32) && PJ_WIN32
++#   define PJSIP_TLS_TRANSPORT_REUSEADDR	0
++# else
++#   define PJSIP_TLS_TRANSPORT_REUSEADDR	1
++# endif
++#endif
++
+ 
+ /* Endpoint. */
+ #define PJSIP_MAX_TIMER_COUNT		(2*pjsip_cfg()->tsx.max_count + \
+diff --git a/pjsip/include/pjsip/sip_transport_tcp.h b/pjsip/include/pjsip/sip_transport_tcp.h
+index 285c6b6..6ed52e2 100644
+--- a/pjsip/include/pjsip/sip_transport_tcp.h
++++ b/pjsip/include/pjsip/sip_transport_tcp.h
+@@ -64,6 +64,12 @@ typedef struct pjsip_tcp_transport_cfg
+     pj_sockaddr		bind_addr;
+ 
+     /**
++     * Should SO_REUSEADDR be used for the listener socket.
++     * Default value is PJSIP_TCP_TRANSPORT_REUSEADDR.
++     */
++    pj_bool_t		reuse_addr;
++
++    /**
+      * Optional published address, which is the address to be
+      * advertised as the address of this SIP transport. 
+      * By default the bound address will be used as the published address.
+diff --git a/pjsip/include/pjsip/sip_transport_tls.h b/pjsip/include/pjsip/sip_transport_tls.h
+index 8164c63..5025982 100644
+--- a/pjsip/include/pjsip/sip_transport_tls.h
++++ b/pjsip/include/pjsip/sip_transport_tls.h
+@@ -174,6 +174,12 @@ typedef struct pjsip_tls_setting
+     pj_time_val	timeout;
+ 
+     /**
++     * Should SO_REUSEADDR be used for the listener socket.
++     * Default value is PJSIP_TLS_TRANSPORT_REUSEADDR.
++     */
++    pj_bool_t reuse_addr;
++
++    /**
+      * QoS traffic type to be set on this transport. When application wants
+      * to apply QoS tagging to the transport, it's preferable to set this
+      * field rather than \a qos_param fields since this is more portable.
+@@ -225,6 +231,7 @@ typedef struct pjsip_tls_state_info
+ PJ_INLINE(void) pjsip_tls_setting_default(pjsip_tls_setting *tls_opt)
+ {
+     pj_memset(tls_opt, 0, sizeof(*tls_opt));
++    tls_opt->reuse_addr = PJSIP_TLS_TRANSPORT_REUSEADDR;
+     tls_opt->qos_type = PJ_QOS_TYPE_BEST_EFFORT;
+     tls_opt->qos_ignore_error = PJ_TRUE;
+ }
 diff --git a/pjsip/lib/.gitignore b/pjsip/lib/.gitignore
 new file mode 100644
 index 0000000..d6b7ef3
@@ -5248,6 +5378,48 @@ index dec4ee5..76b760c 100644
  
  			/* Retrieve the "fixed" offer from negotiator */
  			if (status==PJ_SUCCESS) {
+diff --git a/pjsip/src/pjsip/sip_transport_tcp.c b/pjsip/src/pjsip/sip_transport_tcp.c
+index 808cee9..a09b4e9 100644
+--- a/pjsip/src/pjsip/sip_transport_tcp.c
++++ b/pjsip/src/pjsip/sip_transport_tcp.c
+@@ -217,6 +217,7 @@ PJ_DEF(void) pjsip_tcp_transport_cfg_default(pjsip_tcp_transport_cfg *cfg,
+     cfg->af = af;
+     pj_sockaddr_init(cfg->af, &cfg->bind_addr, NULL, 0);
+     cfg->async_cnt = 1;
++    cfg->reuse_addr = PJSIP_TCP_TRANSPORT_REUSEADDR;
+ }
+ 
+ 
+@@ -298,6 +299,17 @@ PJ_DEF(pj_status_t) pjsip_tcp_transport_start3(
+ 				2, listener->factory.obj_name, 
+ 				"SIP TCP listener socket");
+ 
++    /* Apply SO_REUSEADDR */
++    if (cfg->reuse_addr) {
++	int enabled = 1;
++	status = pj_sock_setsockopt(sock, pj_SOL_SOCKET(), pj_SO_REUSEADDR(),
++				    &enabled, sizeof(enabled));
++	if (status != PJ_SUCCESS) {
++	    PJ_PERROR(4,(listener->factory.obj_name, status,
++		         "Warning: error applying SO_REUSEADDR"));
++	}
++    }
++
+     /* Bind address may be different than factory.local_addr because
+      * factory.local_addr will be resolved below.
+      */
+diff --git a/pjsip/src/pjsip/sip_transport_tls.c b/pjsip/src/pjsip/sip_transport_tls.c
+index 2f244cc..1600f37 100644
+--- a/pjsip/src/pjsip/sip_transport_tls.c
++++ b/pjsip/src/pjsip/sip_transport_tls.c
+@@ -337,6 +337,7 @@ PJ_DEF(pj_status_t) pjsip_tls_transport_start2( pjsip_endpoint *endpt,
+ 	ssock_param.read_buffer_size = PJSIP_MAX_PKT_LEN;
+     ssock_param.ciphers_num = listener->tls_setting.ciphers_num;
+     ssock_param.ciphers = listener->tls_setting.ciphers;
++    ssock_param.reuse_addr = listener->tls_setting.reuse_addr;
+     ssock_param.qos_type = listener->tls_setting.qos_type;
+     ssock_param.qos_ignore_error = listener->tls_setting.qos_ignore_error;
+     pj_memcpy(&ssock_param.qos_params, &listener->tls_setting.qos_params,
 diff --git a/third_party/build/Makefile b/third_party/build/Makefile
 index 36d8061..e1cb0da 100644
 --- a/third_party/build/Makefile
