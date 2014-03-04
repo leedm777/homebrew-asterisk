@@ -2,8 +2,8 @@ require 'formula'
 
 class Asterisk < Formula
   homepage 'http://www.asterisk.org'
-  url 'http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-12.0.0.tar.gz'
-  sha1 'da53096ae98eb4ce1bbd1c85a7968c190f5d226c'
+  url 'http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-12.1.0.tar.gz'
+  sha1 'b0d9ad8324c55a84b83da9e94e6819849a5cb82b'
 
   depends_on 'gcc48'
   depends_on 'gmime'
