@@ -12,16 +12,16 @@ class Asterisk < Formula
   depends_on 'ncurses'
   depends_on 'openssl'
   depends_on 'pjsip'
-  depends_on 'pkg-config'
+  depends_on 'pkg-config' => :build
   depends_on 'speex'
   depends_on 'sqlite'
   depends_on 'srtp'
   depends_on 'unixodbc'
 
   def install
-    openssl = Formula.factory('openssl')
-    sqlite = Formula.factory('sqlite')
-    unixodbc = Formula.factory('unixodbc')
+    openssl = Formula['openssl']
+    sqlite = Formula['sqlite']
+    unixodbc = Formula['unixodbc']
 
     # Asterisk does not build with clang; only GCC
     ENV["CC"]  = "/usr/local/bin/gcc-4.8"
