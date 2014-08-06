@@ -11,7 +11,7 @@ class Asterisk < Formula
   depends_on 'jansson'
   depends_on 'ncurses'
   depends_on 'openssl'
-  depends_on 'pjsip'
+  depends_on 'pjsip-asterisk'
   depends_on 'pkg-config' => :build
   depends_on 'speex'
   depends_on 'sqlite'
