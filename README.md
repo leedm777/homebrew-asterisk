@@ -5,7 +5,7 @@ another, aren't the best fit for going into Homebrew itself.
  
 ## Installation
     brew install https://raw.githubusercontent.com/leedm777/homebrew-asterisk/master/iksemel.rb
-    brew install homebrew/dupes/ncurses
+    brew install ncurses
     brew install https://raw.githubusercontent.com/leedm777/homebrew-asterisk/master/asterisk.rb
 
 Add an asterisk group and user:
