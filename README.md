@@ -4,10 +4,10 @@ machine. This is pretty much a few packages which, for one reason or
 another, aren't the best fit for going into Homebrew itself.
  
 ## Installation
-    brew install https://raw2.github.com/leedm777/homebrew-asterisk/master/iksemel.rb
+    brew install https://raw.githubusercontent.com/leedm777/homebrew-asterisk/master/iksemel.rb
     brew install homebrew/dupes/ncurses
-    brew install https://raw2.github.com/leedm777/homebrew-asterisk/master/pjsip-asterisk.rb
-    brew install https://raw2.github.com/leedm777/homebrew-asterisk/master/asterisk.rb
+    brew install https://raw.githubusercontent.com/leedm777/homebrew-asterisk/master/pjsip-asterisk.rb
+    brew install https://raw.githubusercontent.com/leedm777/homebrew-asterisk/master/asterisk.rb
 
 Add an asterisk group and user:
 
