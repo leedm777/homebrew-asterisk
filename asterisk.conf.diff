@@ -1,0 +1,31 @@
+diff --git a/asterisk-13/asterisk.conf b/asterisk-13/asterisk.conf
+index e4883ec..873c03e 100644
+--- a/asterisk-13/asterisk.conf
++++ b/asterisk-13/asterisk.conf
+@@ -1,15 +1,15 @@
+ [directories](!)
+-astetcdir => /etc/asterisk
+-astmoddir => /usr/lib/asterisk/modules
+-astvarlibdir => /var/lib/asterisk
+-astdbdir => /var/lib/asterisk
+-astkeydir => /var/lib/asterisk
+-astdatadir => /var/lib/asterisk
+-astagidir => /var/lib/asterisk/agi-bin
+-astspooldir => /var/spool/asterisk
+-astrundir => /var/run/asterisk
+-astlogdir => /var/log/asterisk
+-astsbindir => /usr/sbin
++astetcdir => /usr/local/Cellar/asterisk/13/etc/asterisk
++astmoddir => /usr/local/Cellar/asterisk/13/lib/asterisk/modules
++astvarlibdir => /usr/local/Cellar/asterisk/13/var/lib/asterisk
++astdbdir => /usr/local/Cellar/asterisk/13/var/lib/asterisk
++astkeydir => /usr/local/Cellar/asterisk/13/var/lib/asterisk
++astdatadir => /usr/local/Cellar/asterisk/13/var/lib/asterisk
++astagidir => /usr/local/Cellar/asterisk/13/var/lib/asterisk/agi-bin
++astspooldir => /usr/local/Cellar/asterisk/13/var/spool/asterisk
++astrundir => /usr/local/Cellar/asterisk/13/var/run/asterisk
++astlogdir => /usr/local/Cellar/asterisk/13/var/log/asterisk
++astsbindir => /usr/local/Cellar/asterisk/13/sbin
+ 
+ [options]
+ ;verbose = 3

@@ -4,19 +4,34 @@ machine. This is pretty much a few packages which, for one reason or
 another, aren't the best fit for going into Homebrew itself.
  
 ## Installation
-    brew install https://raw2.github.com/leedm777/homebrew-asterisk/master/iksemel.rb
-    brew install homebrew/dupes/ncurses
-    brew install https://raw2.github.com/leedm777/homebrew-asterisk/master/asterisk.rb
+    xcode-select --install
+    brew tap leedm777/homebrew-asterisk
+    brew install asterisk
 
-Add an asterisk group and user:
+## Add an asterisk group and user:
 
     sudo dseditgroup -o create asterisk
     sudo dscl . create /Users/asterisk
     sudo dseditgroup -o edit -a asterisk -t user asterisk
 
-Follow the instructions in the "Using launchd" section [here][voip-info], but replace /usr/local/asterisk/sbin/asterisk with /usr/local/Cellar/asterisk/12.0.0/sbin/asterisk
+## Make some directories not created during install
 
-## Usage
+    mkdir -p /usr/local/Cellar/asterisk/13/etc/asterisk
+    mkdir -p /usr/local/Cellar/asterisk/13/var/run/asterisk
+
+## Get the asterisk-basic configs from github 
+## (Optional if you already have your own configs, but make for an easy start)
+
+    git clone https://github.com/matt-jordan/asterisk-configs.git
+    cp asterisk-configs/asterisk-13/*.conf /usr/local/Cellar/asterisk/13/etc/asterisk/
+    Edit /usr/local/Cellar/asterisk/13/etc/asterisk/asterisk.conf and update necessary
+    lines. A suggested basic diff is in asterisk.conf.diff.
+
+## Copy launchctl file
+
+    sudo cp org.asterisk.asterisk.plist /Library/LaunchDaemons/
+
+## Start Asterisk
 
     launchctl load /Library/LaunchDaemons/org.asterisk.asterisk.plist
 
