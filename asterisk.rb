@@ -23,6 +23,8 @@ class Asterisk < Formula
   depends_on 'srtp'
   depends_on 'unixodbc'
 
+  patch :p0, :DATA
+
   def install
     # To help debug broken builds
     if ARGV.verbose?
@@ -70,3 +72,28 @@ class Asterisk < Formula
     system "make", "install"
   end
 end
+
+__END__
+Change -Xlinker to -Wl,
+
+I don't have a good reason for it, but when building Asterisk via
+homebrew fails when using the -Xlinker option. The -Wl, does the same
+thing, and works, so we'll do that.
+
+Index: Makefile
+===================================================================
+--- Makefile	(revision 433964)
++++ Makefile	(working copy)
+@@ -254,10 +254,10 @@
+ 
+ ifneq ($(findstring darwin,$(OSARCH)),)
+   _ASTCFLAGS+=-D__Darwin__ -mmacosx-version-min=10.6
+-  _SOLINK=-mmacosx-version-min=10.6 -Xlinker -undefined -Xlinker dynamic_lookup
++  _SOLINK=-mmacosx-version-min=10.6 -Wl,-undefined,dynamic_lookup
+   _SOLINK+=/usr/lib/bundle1.o
+   SOLINK=-bundle $(_SOLINK)
+-  DYLINK=-Xlinker -dylib $(_SOLINK)
++  DYLINK=-Wl,-dylib $(_SOLINK)
+   _ASTLDFLAGS+=-L/usr/local/lib
+ else
+ # These are used for all but Darwin
