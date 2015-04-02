@@ -10,6 +10,7 @@ class Asterisk < Formula
   fails_with :llvm
 
   depends_on 'pkg-config' => :build
+  depends_on 'gcc' => :build
 
   depends_on 'gmime'
   depends_on 'iksemel'
