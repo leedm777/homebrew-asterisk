@@ -2,8 +2,8 @@ require 'formula'
 
 class Asterisk < Formula
   homepage 'http://www.asterisk.org'
-  url 'http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-13.3.0.tar.gz'
-  sha1 '85e5f3ae0528280f6f6df7c191631f495dea2eaf'
+  url 'http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-13.3.2.tar.gz'
+  sha1 '4b88b3dbf0bf35d8ce5dfb63090cf0ccf1def54f'
 
   # Asterisk depends on specific GCC features
   fails_with :clang
