@@ -5,12 +5,7 @@ class Asterisk < Formula
   url 'http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-13.3.2.tar.gz'
   sha1 '4b88b3dbf0bf35d8ce5dfb63090cf0ccf1def54f'
 
-  # Asterisk depends on specific GCC features
-  fails_with :clang
-  fails_with :llvm
-
   depends_on 'pkg-config' => :build
-  depends_on 'gcc' => :build
 
   depends_on 'gmime'
   depends_on 'iksemel'
