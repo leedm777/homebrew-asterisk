@@ -64,7 +64,10 @@ class Asterisk < Formula
            "--disable", "BUILD_NATIVE", "menuselect.makeopts"
 
     system "make", "all", "NOISY_BUILD=yes"
-    system "make", "install"
+    system "make", "install", "samples"
+
+    # Replace Cellar references to opt/asterisk
+    system "sed", "-i", "", "s#Cellar/asterisk/[^/]*/#opt/asterisk/#", "#{etc}/asterisk/asterisk.conf"
   end
 end
 

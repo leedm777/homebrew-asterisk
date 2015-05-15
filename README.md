@@ -29,14 +29,6 @@ To install and run Asterisk as a service, add an asterisk group and user:
     sudo dscl . create /Users/asterisk
     sudo dseditgroup -o edit -a asterisk -t user asterisk
 
-## Get the asterisk-basic configs from github
-## (Optional if you already have your own configs, but make for an easy start)
-
-    git clone https://github.com/matt-jordan/asterisk-configs.git
-    cp asterisk-configs/asterisk-13/*.conf /usr/local/Cellar/asterisk/13/etc/asterisk/
-    Edit /usr/local/Cellar/asterisk/13/etc/asterisk/asterisk.conf and update necessary
-    lines. A suggested basic diff is in asterisk.conf.diff.
-
 ## Copy launchctl file
 
     sudo cp org.asterisk.asterisk.plist /Library/LaunchDaemons/
