@@ -5,6 +5,8 @@ class Asterisk < Formula
   url 'http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-13.3.2.tar.gz'
   sha1 '4b88b3dbf0bf35d8ce5dfb63090cf0ccf1def54f'
 
+  option "with-dev-mode", "Enable dev mode in Asterisk"
+
   depends_on 'pkg-config' => :build
 
   depends_on 'gmime'
@@ -27,6 +29,11 @@ class Asterisk < Formula
       ENV.j1
     end
 
+    dev_mode = "no"
+    if build.with? "dev-mode"
+      dev_mode = "yes"
+    end
+
     openssl = Formula['openssl']
     sqlite = Formula['sqlite']
     unixodbc = Formula['unixodbc']
@@ -40,6 +47,9 @@ class Asterisk < Formula
 
     system "./configure", "--prefix=#{prefix}",
                           "--sysconfdir=#{etc}",
+                          "--datadir=#{share}/#{name}",
+                          "--docdir=#{doc}/asterisk",
+                          "--enable-dev-mode=#{dev_mode}",
                           "--with-pjsip=#{pjsip.opt_prefix}",
                           "--with-sqlite3=#{sqlite.opt_prefix}",
                           "--with-ssl=#{openssl.opt_prefix}",
@@ -62,6 +72,13 @@ class Asterisk < Formula
     # Native compilation doesn't work with Homebrew's gcc-4.8
     system "menuselect/menuselect",
            "--disable", "BUILD_NATIVE", "menuselect.makeopts"
+
+    if dev_mode == "yes"
+      system "menuselect/menuselect",
+             "--enable", "DONT_OPTIMIZE", "menuselect.makeopts"
+      system "menuselect/menuselect",
+             "--enable", "DO_CRASH", "menuselect.makeopts"
+    end
 
     system "make", "all", "NOISY_BUILD=yes"
     system "make", "install", "samples"
