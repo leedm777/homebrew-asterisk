@@ -7,6 +7,10 @@ class Asterisk < Formula
 
   option "with-dev-mode", "Enable dev mode in Asterisk"
 
+  fails_with :llvm
+  fails_with :clang
+
+  depends_on 'gcc' => :build
   depends_on 'pkg-config' => :build
 
   depends_on 'gmime'
