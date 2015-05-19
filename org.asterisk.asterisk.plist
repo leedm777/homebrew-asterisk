@@ -8,10 +8,10 @@
 <string>com.asterisk.org.asterisk</string>
 <key>ProgramArguments</key>
 <array>
-    <string>/usr/local/Cellar/asterisk/13/sbin/asterisk</string>
+    <string>/usr/local/sbin/asterisk</string>
     <string>-f</string>
     <string>-C</string>
-    <string>/usr/local/Cellar/asterisk/13/etc/asterisk/asterisk.conf</string>
+    <string>/usr/local/etc/asterisk/asterisk.conf</string>
 </array>
 <key>UserName</key>
 <string>asterisk</string>
