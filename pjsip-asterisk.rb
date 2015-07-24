@@ -2,8 +2,8 @@ require 'formula'
 
 class PjsipAsterisk < Formula
   homepage 'http://www.pjsip.org/'
-  url 'http://www.pjsip.org/release/2.3/pjproject-2.3.tar.bz2'
-  sha1 '42743b36d758fb0c7656a4b5f041d086efbcb587'
+  url 'http://www.pjsip.org/release/2.4/pjproject-2.4.tar.bz2'
+  sha1 '7a6cbb5128db41372f678ca07128924a0427585f'
 
   keg_only "Specifically tuned just for asterisk"
 
