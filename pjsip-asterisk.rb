@@ -20,6 +20,9 @@ class PjsipAsterisk < Formula
 
     # Hack to truly disable opencore
     ENV['enable_opencore_amr'] = 'no'
+    # Build for not-debug
+    ENV['CFLAGS'] = '-O2 -DNDEBUG'
+
     system "./configure", "--prefix=#{prefix}",
                           "--with-ssl=#{openssl.opt_prefix}",
                           "--enable-shared",
