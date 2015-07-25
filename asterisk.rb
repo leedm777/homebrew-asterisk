@@ -2,8 +2,8 @@ require 'formula'
 
 class Asterisk < Formula
   homepage 'http://www.asterisk.org'
-  url 'http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-13.3.2.tar.gz'
-  sha1 '4b88b3dbf0bf35d8ce5dfb63090cf0ccf1def54f'
+  url 'http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-13.4.0.tar.gz'
+  sha1 'fb5e1244899dbc5d769f2554b63a4783fd5b8ef0'
 
   option "with-dev-mode", "Enable dev mode in Asterisk"
 
@@ -81,7 +81,11 @@ class Asterisk < Formula
       system "menuselect/menuselect",
              "--enable", "DONT_OPTIMIZE", "menuselect.makeopts"
       system "menuselect/menuselect",
+             "--enable", "TEST_FRAMEWORK", "menuselect.makeopts"
+      system "menuselect/menuselect",
              "--enable", "DO_CRASH", "menuselect.makeopts"
+      system "menuselect/menuselect",
+             "--enable-category", "MENUSELECT_TESTS", "menuselect.makeopts"
     end
 
     system "make", "all", "NOISY_BUILD=yes"
