@@ -6,11 +6,15 @@ class Asterisk < Formula
   sha1 'fb5e1244899dbc5d769f2554b63a4783fd5b8ef0'
 
   option "with-dev-mode", "Enable dev mode in Asterisk"
+  option "with-clang", "Compile with clang instead of gcc"
 
-  fails_with :llvm
-  fails_with :clang
+  if not build.with? "clang"
+    fails_with :llvm
+    fails_with :clang
 
-  depends_on 'gcc' => :build
+    depends_on 'gcc' => :build
+  end
+
   depends_on 'pkg-config' => :build
 
   depends_on 'gmime'
