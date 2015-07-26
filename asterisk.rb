@@ -8,6 +8,15 @@ class Asterisk < Formula
   option "with-dev-mode", "Enable dev mode in Asterisk"
   option "with-clang", "Compile with clang instead of gcc"
 
+  devel do
+    url "https://gerrit.asterisk.org/asterisk.git", :branch => "13"
+    version "13"
+  end
+
+  head do
+    url "https://gerrit.asterisk.org/asterisk.git"
+  end
+
   if not build.with? "clang"
     fails_with :llvm
     fails_with :clang
@@ -28,7 +37,9 @@ class Asterisk < Formula
   depends_on 'srtp'
   depends_on 'unixodbc'
 
-  patch :p0, :DATA
+  stable do
+    patch :p0, :DATA
+  end
 
   def install
     # To help debug broken builds
