@@ -55,6 +55,7 @@ class Asterisk < Formula
 
     system "./configure", "--prefix=#{prefix}",
                           "--sysconfdir=#{etc}",
+                          "--localstatedir=#{var}",
                           "--datadir=#{share}/#{name}",
                           "--docdir=#{doc}/asterisk",
                           "--enable-dev-mode=#{dev_mode}",
