@@ -10,6 +10,20 @@ another, aren't the best fit for going into Homebrew itself.
     brew tap leedm777/homebrew-asterisk
     brew install asterisk
 
+Installation will automagically add the `homebrew/dupes` tap.
+
+## Installation options
+
+ * `--with-clang` - Compile with clang instead of gcc
+   * This is a new-ish option in Asterisk, and might be a bit crashy.
+ * `--with-dev-mode` - Enable dev mode in Asterisk
+   * Disable optimizations, turns up build warnings, and enables the test
+     framework.
+ * `--devel` - Install development version 13
+   * Build the latest code from the 13 branch.
+ * `--HEAD` - Install HEAD version
+   * Build the latest code from the master branch.
+
 ## Configuration
 
 Configuration files are in `/usr/local/etc/asterisk`. Detailed configuration
@@ -40,6 +54,7 @@ If you want to just run Asterisk occasionally, just start it up using
 
 To have launchd start asterisk at login:
 
+    mkdir -p ~/Library/LaunchAgents
     ln -sfv /usr/local/opt/asterisk/*.plist ~/Library/LaunchAgents
 
 Then to load asterisk now:
