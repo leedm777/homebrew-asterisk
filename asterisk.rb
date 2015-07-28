@@ -110,6 +110,40 @@ class Asterisk < Formula
     # Replace Cellar references to opt/asterisk
     system "sed", "-i", "", "s#Cellar/asterisk/[^/]*/#opt/asterisk/#", "#{etc}/asterisk/asterisk.conf"
   end
+
+  def plist; <<-EOS.undent
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+      <dict>
+        <key>KeepAlive</key>
+        <dict>
+          <key>SuccessfulExit</key>
+          <false/>
+        </dict>
+        <key>Label</key>
+          <string>#{plist_name}</string>
+        <key>ProgramArguments</key>
+        <array>
+          <string>#{opt_sbin}/asterisk</string>
+          <string>-f</string>
+          <string>-C</string>
+          <string>#{etc}/asterisk/asterisk.conf</string>
+        </array>
+         <key>RunAtLoad</key>
+        <true/>
+        <key>WorkingDirectory</key>
+        <string>#{var}</string>
+        <key>StandardErrorPath</key>
+        <string>#{var}/log/asterisk.log</string>
+        <key>StandardOutPath</key>
+        <string>#{var}/log/asterisk.log</string>
+        <key>ServiceDescription</key>
+        <string>Asterisk PBX</string>
+      </dict>
+    </plist>
+    EOS
+  end
 end
 
 __END__
