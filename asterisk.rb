@@ -2,8 +2,8 @@ require 'formula'
 
 class Asterisk < Formula
   homepage 'http://www.asterisk.org'
-  url 'http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-13.4.0.tar.gz'
-  sha1 'fb5e1244899dbc5d769f2554b63a4783fd5b8ef0'
+  url 'http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-13.5.0.tar.gz'
+  sha1 '7715d7496ca35e93482a15fd7044f05f4d8bdbe5'
 
   option "with-dev-mode", "Enable dev mode in Asterisk"
   option "with-clang", "Compile with clang instead of gcc"
@@ -36,10 +36,6 @@ class Asterisk < Formula
   depends_on 'sqlite'
   depends_on 'srtp'
   depends_on 'unixodbc'
-
-  stable do
-    patch :p0, :DATA
-  end
 
   def install
     # To help debug broken builds
@@ -145,28 +141,3 @@ class Asterisk < Formula
     EOS
   end
 end
-
-__END__
-Change -Xlinker to -Wl,
-
-I don't have a good reason for it, but when building Asterisk via
-homebrew fails when using the -Xlinker option. The -Wl, does the same
-thing, and works, so we'll do that.
-
-Index: Makefile
-===================================================================
---- Makefile	(revision 433964)
-+++ Makefile	(working copy)
-@@ -254,10 +254,10 @@
- 
- ifneq ($(findstring darwin,$(OSARCH)),)
-   _ASTCFLAGS+=-D__Darwin__ -mmacosx-version-min=10.6
--  _SOLINK=-mmacosx-version-min=10.6 -Xlinker -undefined -Xlinker dynamic_lookup
-+  _SOLINK=-mmacosx-version-min=10.6 -Wl,-undefined,dynamic_lookup
-   _SOLINK+=/usr/lib/bundle1.o
-   SOLINK=-bundle $(_SOLINK)
--  DYLINK=-Xlinker -dylib $(_SOLINK)
-+  DYLINK=-Wl,-dylib $(_SOLINK)
-   _ASTLDFLAGS+=-L/usr/local/lib
- else
- # These are used for all but Darwin
