@@ -1,0 +1,18 @@
+language: c
+os:
+  - osx
+env:
+  - CLANG=--with-clang
+  - CLANG=
+before_install:
+  - brew update
+  - brew outdated pkg-config || brew upgrade pkg-config
+install:
+  - brew tap leedm777/homebrew-asterisk
+script:
+  # Current version
+  - brew install ./asterisk.rb --verbose --with-dev-mode ${CLANG}
+  # Current release branch
+  - brew install ./asterisk.rb --verbose --with-dev-mode --devel ${CLANG}
+  # Next release branch
+  - brew install ./asterisk.rb --verbose --with-dev-mode --HEAD ${CLANG}
