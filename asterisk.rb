@@ -81,7 +81,7 @@ class Asterisk < Formula
                           "--datadir=#{share}/#{name}",
                           "--docdir=#{doc}/asterisk",
                           "--enable-dev-mode=#{dev_mode}",
-                          "--with-pjsip=#{pjsip.opt_prefix}",
+                          "--with-pjproject=#{pjsip.opt_prefix}",
                           "--with-sqlite3=#{sqlite.opt_prefix}",
                           "--with-ssl=#{openssl.opt_prefix}",
                           "--with-unixodbc=#{unixodbc.opt_prefix}",
