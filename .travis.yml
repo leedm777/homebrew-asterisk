@@ -2,11 +2,17 @@ language: c
 os:
   - osx
 env:
-  - CLANG=--with-clang
-  - CLANG=
+  global:
+    # Travis CI sets CC to gcc-4.2, which is ungood for building Asterisk
+    - CC=
+  matrix:
+    - CLANG=--with-clang
+    - CLANG=
 before_install:
+  - env
   - brew update
-  - brew outdated pkg-config || brew upgrade pkg-config
+  - brew upgrade
+  - brew ls
 install:
   - brew tap leedm777/homebrew-asterisk
 script:
