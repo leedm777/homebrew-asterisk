@@ -1,21 +1,21 @@
-language: c
 os:
   - osx
-env:
-  matrix:
-    - CLANG=--with-clang
-    - CLANG=
+language: c
+compilers:
+  - clang
+  - gcc
 before_install:
   - env
   - brew update
   - brew upgrade
+  - brew tap leedm777/homebrew-asterisk
   - brew ls
 install:
-  - brew tap leedm777/homebrew-asterisk
+  - brew install --only-dependencies ./asterisk.rb
 script:
   # Current version
-  - brew install ./asterisk.rb --verbose --with-dev-mode ${CLANG}
+  - brew install ./asterisk.rb --verbose --with-dev-mode --with-${CC}
   # Current release branch
-  - brew install ./asterisk.rb --verbose --with-dev-mode --devel ${CLANG}
+  - brew install ./asterisk.rb --verbose --with-dev-mode --devel --with-${CC}
   # Next release branch
-  - brew install ./asterisk.rb --verbose --with-dev-mode --HEAD ${CLANG}
+  - brew install ./asterisk.rb --verbose --with-dev-mode --HEAD --with-${CC}

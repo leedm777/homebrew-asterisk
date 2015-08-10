@@ -7,6 +7,7 @@ class Asterisk < Formula
 
   option "with-dev-mode", "Enable dev mode in Asterisk"
   option "with-clang", "Compile with clang instead of gcc"
+  option "with-gcc", "Compile with gcc (default)"
 
   devel do
     url "https://gerrit.asterisk.org/asterisk.git", :branch => "13"
