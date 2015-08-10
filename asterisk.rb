@@ -55,12 +55,6 @@ class Asterisk < Formula
   depends_on 'unixodbc'
 
   def install
-    # To help debug broken builds
-    if ARGV.verbose?
-      # disable parallel builds
-      ENV.j1
-    end
-
     dev_mode = "no"
     if build.with? "dev-mode"
       dev_mode = "yes"
