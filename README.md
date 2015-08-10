@@ -1,5 +1,7 @@
 # Homebrew Asterisk
 
+[![Build Status](https://travis-ci.org/leedm777/homebrew-asterisk.svg?branch=master)](https://travis-ci.org/leedm777/homebrew-asterisk)
+
 This repo contains the Homebrew formulas I use for my [Asterisk][ast] dev
 machine. This is pretty much a few packages which, for one reason or
 another, aren't the best fit for going into Homebrew itself.
