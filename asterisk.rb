@@ -11,25 +11,10 @@ class Asterisk < Formula
   devel do
     url "https://gerrit.asterisk.org/asterisk.git", :branch => "13"
     version "13"
-
-    patch do
-      url "https://github.com/leedm777/asterisk/commit/06b464ab1b7c42e3c1b5b05463d5bc73c112dd76.patch"
-      sha256 "b735fa4839517cc149642a10d45aefe5ff4fa7b19d9733b5305e2c253a004e05"
-    end
   end
 
   head do
     url "https://gerrit.asterisk.org/asterisk.git"
-
-    patch do
-      url "https://github.com/leedm777/asterisk/commit/06b464ab1b7c42e3c1b5b05463d5bc73c112dd76.patch"
-      sha256 "b735fa4839517cc149642a10d45aefe5ff4fa7b19d9733b5305e2c253a004e05"
-    end
-
-    patch do
-      url "https://github.com/leedm777/asterisk/commit/40caf0ad9bef07bdfb568a88192c157dd1840100.patch"
-      sha256 "eb6ae6ecd62d4a64c668efeade57d93c73080aa37efb09a04d728045d931caac"
-    end
   end
 
   if not build.with? "clang"
