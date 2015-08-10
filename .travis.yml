@@ -13,10 +13,9 @@ before_install:
 install:
   - brew tap leedm777/homebrew-asterisk
 script:
-  # The explicit CC= is b/c Travis CI sets it to gcc, which is gcc-4.2
   # Current version
-  - CC= brew install ./asterisk.rb --verbose --with-dev-mode ${CLANG}
+  - brew install ./asterisk.rb --verbose --with-dev-mode ${CLANG}
   # Current release branch
-  - CC= brew install ./asterisk.rb --verbose --with-dev-mode --devel ${CLANG}
+  - brew install ./asterisk.rb --verbose --with-dev-mode --devel ${CLANG}
   # Next release branch
-  - CC= brew install ./asterisk.rb --verbose --with-dev-mode --HEAD ${CLANG}
+  - brew install ./asterisk.rb --verbose --with-dev-mode --HEAD ${CLANG}

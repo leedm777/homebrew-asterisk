@@ -35,6 +35,8 @@ class Asterisk < Formula
   if not build.with? "clang"
     fails_with :llvm
     fails_with :clang
+    # :gcc just matches on apple-gcc42
+    fails_with :gcc
 
     depends_on 'gcc' => :build
   end
