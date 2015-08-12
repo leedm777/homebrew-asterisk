@@ -4,6 +4,10 @@ language: c
 compilers:
   - clang
   - gcc
+env:
+  - EXTRA=
+  - EXTRA=--devel
+  - EXTRA=--HEAD
 before_install:
   - env
   - brew update
@@ -13,9 +17,4 @@ before_install:
 install:
   - brew install --only-dependencies ./asterisk.rb
 script:
-  # Current version
-  - brew install ./asterisk.rb --verbose --with-dev-mode --with-${CC}
-  # Current release branch
-  - brew install ./asterisk.rb --verbose --with-dev-mode --devel --with-${CC}
-  # Next release branch
-  - brew install ./asterisk.rb --verbose --with-dev-mode --HEAD --with-${CC}
+  - brew reinstall ./asterisk.rb --verbose --with-dev-mode --with-${CC} ${EXTRA}
