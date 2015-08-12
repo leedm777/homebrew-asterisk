@@ -1,7 +1,7 @@
 os:
   - osx
 language: c
-compilers:
+compiler:
   - clang
   - gcc
 env:
