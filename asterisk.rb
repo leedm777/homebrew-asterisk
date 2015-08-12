@@ -1,44 +1,44 @@
-require 'formula'
-
 class Asterisk < Formula
-  homepage 'http://www.asterisk.org'
-  url 'http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-13.5.0.tar.gz'
-  sha1 '7715d7496ca35e93482a15fd7044f05f4d8bdbe5'
+  desc "Open Source PBX and telephony toolkit"
+  homepage "http://www.asterisk.org"
+  url "http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-13.5.0.tar.gz"
+  sha256 "e8b8d071f783edea82de510194dd272070ffbb7cdb2f5f6b020be5d15b67e8b9"
+
+  devel do
+    url "https://gerrit.asterisk.org/asterisk.git", :branch => "13"
+    version "13.6-devel"
+  end
+
+  head do
+    url "https://gerrit.asterisk.org/asterisk.git"
+    version "14-head"
+  end
 
   option "with-dev-mode", "Enable dev mode in Asterisk"
   option "with-clang", "Compile with clang instead of gcc"
   option "with-gcc", "Compile with gcc (default)"
 
-  devel do
-    url "https://gerrit.asterisk.org/asterisk.git", :branch => "13"
-    version "13"
-  end
-
-  head do
-    url "https://gerrit.asterisk.org/asterisk.git"
-  end
-
-  if not build.with? "clang"
+  if build.without? "clang"
     fails_with :llvm
     fails_with :clang
     # :gcc just matches on apple-gcc42
     fails_with :gcc
 
-    depends_on 'gcc' => :build
+    depends_on "gcc" => :build
   end
 
-  depends_on 'pkg-config' => :build
+  depends_on "pkg-config" => :build
 
-  depends_on 'gmime'
-  depends_on 'iksemel'
-  depends_on 'jansson'
-  depends_on 'homebrew/dupes/ncurses'
-  depends_on 'openssl'
-  depends_on 'pjsip-asterisk'
-  depends_on 'speex'
-  depends_on 'sqlite'
-  depends_on 'srtp'
-  depends_on 'unixodbc'
+  depends_on "gmime"
+  depends_on "iksemel"
+  depends_on "jansson"
+  depends_on "homebrew/dupes/ncurses"
+  depends_on "openssl"
+  depends_on "pjsip-asterisk"
+  depends_on "speex"
+  depends_on "sqlite"
+  depends_on "srtp"
+  depends_on "unixodbc"
 
   def install
     dev_mode = "no"
@@ -46,10 +46,10 @@ class Asterisk < Formula
       dev_mode = "yes"
     end
 
-    openssl = Formula['openssl']
-    sqlite = Formula['sqlite']
-    unixodbc = Formula['unixodbc']
-    pjsip = Formula['pjsip-asterisk']
+    openssl = Formula["openssl"]
+    sqlite = Formula["sqlite"]
+    unixodbc = Formula["unixodbc"]
+    pjsip = Formula["pjsip-asterisk"]
 
     # Some Asterisk code doesn't follow strict aliasing rules
     ENV.append "CFLAGS", "-fno-strict-aliasing"

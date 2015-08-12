@@ -1,27 +1,26 @@
-require 'formula'
-
 class PjsipAsterisk < Formula
-  homepage 'http://www.pjsip.org/'
-  url 'http://www.pjsip.org/release/2.4/pjproject-2.4.tar.bz2'
-  sha1 '7a6cbb5128db41372f678ca07128924a0427585f'
+  desc "PJSIP libraries for Asterisk"
+  homepage "http://www.pjsip.org/"
+  url "http://www.pjsip.org/release/2.4/pjproject-2.4.tar.bz2"
+  sha256 "108015aeda8dce20d182ec9b4fc277026d2b1796e82947da106eeb406eb02059"
 
   keg_only "Specifically tuned just for asterisk"
 
-  depends_on 'libgsm'
-  depends_on 'openssl'
-  depends_on 'portaudio'
-  depends_on 'speex'
-  depends_on 'srtp'
+  depends_on "libgsm"
+  depends_on "openssl"
+  depends_on "portaudio"
+  depends_on "speex"
+  depends_on "srtp"
 
   def install
     ENV.j1
 
-    openssl = Formula.factory('openssl')
+    openssl = Formula["openssl"]
 
     # Hack to truly disable opencore
-    ENV['enable_opencore_amr'] = 'no'
+    ENV["enable_opencore_amr"] = "no"
     # Build for not-debug
-    ENV['CFLAGS'] = '-O2 -DNDEBUG'
+    ENV["CFLAGS"] = "-O2 -DNDEBUG"
 
     system "./configure", "--prefix=#{prefix}",
                           "--with-ssl=#{openssl.opt_prefix}",
