@@ -11,8 +11,9 @@ env:
 before_install:
   - env
   - brew update
-  - brew upgrade
   - brew tap leedm777/homebrew-asterisk
+  # upgrade only outdated dependencies
+  - brew upgrade $(comm -12 <(brew deps ./asterisk.rb) <(brew outdated))
   - brew ls
 install:
   - brew install --only-dependencies ./asterisk.rb
