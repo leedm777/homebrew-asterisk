@@ -13,7 +13,7 @@ before_install:
   - brew update
   - brew tap leedm777/homebrew-asterisk
   # upgrade only outdated dependencies
-  - brew upgrade $(comm -12 <(brew deps ./asterisk.rb) <(brew outdated))
+  - comm -12 <(brew deps ./asterisk.rb) <(brew outdated) | xargs brew upgrade
   - brew ls
 install:
   - brew install --only-dependencies ./asterisk.rb
