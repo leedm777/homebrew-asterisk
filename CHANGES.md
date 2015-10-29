@@ -1,5 +1,10 @@
 # homebrew-asterisk
 
+## 2015-10-29
+
+ * Use GitHub instead of Gerrit for HEAD and devel builds, so we're cloning
+   from a repo instead of a code review tool
+
 ## 2015-10-13
 
  * Added changelog
