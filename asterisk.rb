@@ -17,6 +17,7 @@ class Asterisk < Formula
   option "with-dev-mode", "Enable dev mode in Asterisk"
   option "with-clang", "Compile with clang instead of gcc"
   option "with-gcc", "Compile with gcc (default)"
+  option "without-optimizations", "Disable optimizations"
 
   if build.without? "clang"
     fails_with :llvm
@@ -41,9 +42,15 @@ class Asterisk < Formula
   depends_on "unixodbc"
 
   def install
-    dev_mode = "no"
+    dev_mode = false
+    optimize = true
     if build.with? "dev-mode"
-      dev_mode = "yes"
+      dev_mode = true
+      optimize = false
+    end
+
+    if build.without? "optimizations"
+      optimize = false
     end
 
     openssl = Formula["openssl"]
@@ -62,7 +69,7 @@ class Asterisk < Formula
                           "--localstatedir=#{var}",
                           "--datadir=#{share}/#{name}",
                           "--docdir=#{doc}/asterisk",
-                          "--enable-dev-mode=#{dev_mode}",
+                          "--enable-dev-mode=#{dev_mode ? 'yes' : 'no'}",
                           "--with-pjproject=#{pjsip.opt_prefix}",
                           "--with-sqlite3=#{sqlite.opt_prefix}",
                           "--with-ssl=#{openssl.opt_prefix}",
@@ -86,9 +93,12 @@ class Asterisk < Formula
     system "menuselect/menuselect",
            "--disable", "BUILD_NATIVE", "menuselect.makeopts"
 
-    if dev_mode == "yes"
+    if not optimize
       system "menuselect/menuselect",
              "--enable", "DONT_OPTIMIZE", "menuselect.makeopts"
+    end
+
+    if dev_mode
       system "menuselect/menuselect",
              "--enable", "TEST_FRAMEWORK", "menuselect.makeopts"
       system "menuselect/menuselect",

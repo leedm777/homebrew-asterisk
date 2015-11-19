@@ -1,5 +1,10 @@
 # homebrew-asterisk
 
+## 2015-11-19
+
+ * Added separate optimize and dev-mode options (although dev-mode still implies
+   dont-optimize)
+
 ## 2015-10-29
 
  * Use GitHub instead of Gerrit for HEAD and devel builds, so we're cloning
@@ -10,4 +15,4 @@
  * Added changelog
  * Upgrade to Asterisk 13.6.0
  * Upgrade to PJSIP 2.4.5
- * Refine brew upgrade to only upgrade dependencies
+ * Travis: Refine brew upgrade to only upgrade dependencies
