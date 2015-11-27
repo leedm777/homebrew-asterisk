@@ -1,5 +1,9 @@
 # homebrew-asterisk
 
+## 2015-11-26
+
+ * Removed unneeded dep on gmime.
+
 ## 2015-11-19
 
  * Added separate optimize and dev-mode options (although dev-mode still implies

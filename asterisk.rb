@@ -30,7 +30,6 @@ class Asterisk < Formula
 
   depends_on "pkg-config" => :build
 
-  depends_on "gmime"
   depends_on "iksemel"
   depends_on "jansson"
   depends_on "homebrew/dupes/ncurses"
