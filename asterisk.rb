@@ -36,9 +36,9 @@ class Asterisk < Formula
   depends_on "openssl"
   depends_on "pjsip-asterisk"
   depends_on "speex"
-  depends_on "sqlite"
+  #depends_on "sqlite"
   depends_on "srtp"
-  depends_on "unixodbc"
+  #depends_on "unixodbc"
 
   def install
     dev_mode = false
@@ -53,8 +53,6 @@ class Asterisk < Formula
     end
 
     openssl = Formula["openssl"]
-    sqlite = Formula["sqlite"]
-    unixodbc = Formula["unixodbc"]
     pjsip = Formula["pjsip-asterisk"]
 
     # Some Asterisk code doesn't follow strict aliasing rules
@@ -69,10 +67,8 @@ class Asterisk < Formula
                           "--datadir=#{share}/#{name}",
                           "--docdir=#{doc}/asterisk",
                           "--enable-dev-mode=#{dev_mode ? 'yes' : 'no'}",
-                          "--with-pjproject=#{pjsip.opt_prefix}",
-                          "--with-sqlite3=#{sqlite.opt_prefix}",
                           "--with-ssl=#{openssl.opt_prefix}",
-                          "--with-unixodbc=#{unixodbc.opt_prefix}",
+                          "--with-pjproject=#{pjsip.opt_prefix}",
                           "--without-gmime",
                           "--without-gtk2",
                           "--without-iodbc",

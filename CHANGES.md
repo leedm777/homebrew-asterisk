@@ -2,7 +2,8 @@
 
 ## 2015-11-26
 
- * Removed unneeded dep on gmime.
+ * Removed unneeded dep on gmime
+ * #21 - Use system ODBC and SQLite
 
 ## 2015-11-19
 
