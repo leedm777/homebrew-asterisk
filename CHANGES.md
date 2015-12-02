@@ -1,5 +1,9 @@
 # homebrew-asterisk
 
+## 2015-12-02
+
+ * More #21 - Use system ncurses
+
 ## 2015-11-26
 
  * Removed unneeded dep on gmime

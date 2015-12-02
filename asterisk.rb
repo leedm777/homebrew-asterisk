@@ -32,13 +32,10 @@ class Asterisk < Formula
 
   depends_on "iksemel"
   depends_on "jansson"
-  depends_on "homebrew/dupes/ncurses"
   depends_on "openssl"
   depends_on "pjsip-asterisk"
   depends_on "speex"
-  #depends_on "sqlite"
   depends_on "srtp"
-  #depends_on "unixodbc"
 
   def install
     dev_mode = false
