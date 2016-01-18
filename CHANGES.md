@@ -1,5 +1,9 @@
 # homebrew-asterisk
 
+## 2016-01-18
+
+ * Upgrade to Asterisk 13.7.0
+
 ## 2015-12-02
 
  * More #21 - Use system ncurses
