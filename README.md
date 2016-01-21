@@ -95,5 +95,18 @@ plist feature. If you had followed those instructions, you may need to remove
 `/Library/LaunchDaemons/org.asterisk.asterisk.plist` before installing
 [the new plist above](#Running as a service).
 
+## Common problems
+
+**Compilation fails with `error: /usr/lib/bundle1.o: No such file or directory`**
+
+This happens when you try to build Asterisk without the XCode CLT installed.
+This also [affects how GCC is built](Homebrew/homebrew#34461), so you will also
+want to reinstall GCC. The good news is that with the CLT installed, GCC should
+install via bottle, which is tons faster than building it from source.
+
+    xcode-select --install
+    brew rm gcc
+    brew install asterisk
+
  [ast]: http://asterisk.org/
  [config-docs]: https://wiki.asterisk.org/wiki/x/cYXAAQ

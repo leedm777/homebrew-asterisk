@@ -1,5 +1,10 @@
 # homebrew-asterisk
 
+## 2016-01-21
+
+ * Added docs for how to fix the `/usr/lib/bundle1.o: No such file or directory`
+   problem
+
 ## 2016-01-18
 
  * Upgrade to Asterisk 13.7.0
