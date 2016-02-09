@@ -1,8 +1,8 @@
 class Asterisk < Formula
   desc "Open Source PBX and telephony toolkit"
   homepage "http://www.asterisk.org"
-  url "http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-13.7.1.tar.gz"
-  sha256 "f96bb621da63e1d1814cdd25cd92a6ebb976655938d25e4f6e53196411e5804d"
+  url "http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-13.7.2.tar.gz"
+  sha256 "8a22856f0cff22b6f1d901eb0a91d459cd73f3ab1f71e9738b947428947fb232"
 
   devel do
     url "https://github.com/asterisk/asterisk.git", :branch => "13"
