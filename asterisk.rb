@@ -19,6 +19,28 @@ class Asterisk < Formula
   option "with-gcc", "Compile with gcc (default)"
   option "without-optimizations", "Disable optimizations"
 
+  option "without-sounds-en", "Install English sound packages"
+  option "with-sounds-en-au", "Install Australian sound packages"
+  option "with-sounds-en-gb", "Install British sound packages"
+  option "with-sounds-es", "Install Spanish sound packages"
+  option "with-sounds-fr", "Install French sound packages"
+  option "with-sounds-it", "Install Italian sound packages"
+  option "with-sounds-ru", "Install Russian sound packages"
+  option "with-sounds-ja", "Install Japanese sound packages"
+  option "with-sounds-sv", "Install Swedish sound packages"
+
+  option "without-sounds-gsm", "Install GSM formatted sounds"
+  option "with-sounds-wav", "Install WAV formatted sounds"
+  option "with-sounds-ulaw", "Install uLaw formatted sounds"
+  option "with-sounds-alaw", "Install aLaw formatted sounds"
+  option "with-sounds-g729", "Install G.729 formatted sounds"
+  option "with-sounds-g722", "Install G.722 formatted sounds"
+  option "with-sounds-sln16", "Install SLN16 formatted sounds"
+  option "with-sounds-siren7", "Install SIREN7 formatted sounds"
+  option "with-sounds-siren14", "Install SIREN14 formatted sounds"
+
+  option "with-sounds-extras", "Install extra sound packages"
+
   if build.without? "clang"
     fails_with :llvm
     fails_with :clang
@@ -38,6 +60,13 @@ class Asterisk < Formula
   depends_on "srtp"
 
   def install
+    langs = [
+      "en", "en-au", "en-gb", "es", "fr", "it", "ru", "ja", "sv"
+    ].select { |lang| build.with? "sounds-#{lang}" }
+    formats = [
+      "gsm", "wav", "ulaw", "alaw", "g729", "g722", "sln16", "siren7", "siren14"
+    ].select { |format| build.with? "sounds-#{format}" }
+
     dev_mode = false
     optimize = true
     if build.with? "dev-mode"
@@ -98,6 +127,21 @@ class Asterisk < Formula
       system "menuselect/menuselect",
              "--enable-category", "MENUSELECT_TESTS", "menuselect.makeopts"
     end
+
+    formats.each { |format|
+      system "menuselect/menuselect",
+             "--enable", "MOH-OPSOUND-#{format.upcase}", "menuselect.makeopts"
+
+      langs.each { |lang|
+        system "menuselect/menuselect",
+               "--enable", "CORE-SOUNDS-#{lang.upcase}-#{format.upcase}", "menuselect.makeopts"
+
+        if build.with? 'sounds-extras'
+          system "menuselect/menuselect",
+                 "--enable", "EXTRA-SOUNDS-#{lang.upcase}-#{format.upcase}", "menuselect.makeopts"
+        end
+      }
+    }
 
     system "make", "all", "NOISY_BUILD=yes"
     system "make", "install", "samples"

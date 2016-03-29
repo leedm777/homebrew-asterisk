@@ -1,5 +1,9 @@
 # homebrew-asterisk
 
+## 2016-03-29
+
+ * Added `--with-sounds-*` options for installing additional sound files
+
 ## 2016-02-09
 
  * Asterisk 13.7.2 (Security Release)
