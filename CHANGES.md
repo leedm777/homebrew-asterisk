@@ -1,5 +1,9 @@
 # homebrew-asterisk
 
+## 2016-03-30
+
+ * Asterisk 13.8.0
+
 ## 2016-03-29
 
  * Added `--with-sounds-*` options for installing additional sound files
