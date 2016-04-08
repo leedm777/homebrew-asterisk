@@ -17,6 +17,8 @@ before_install:
   - comm -12 <(brew deps ./asterisk.rb) <(brew outdated) | xargs brew upgrade
   - brew ls
 install:
+  # install pjsip verbosely, in case we need to debug that build, too
+  - brew install pjsip-asterisk --verbose
   - brew install --only-dependencies ./asterisk.rb
 script:
   - brew reinstall ./asterisk.rb --verbose --with-dev-mode --with-${CC} ${EXTRA}
