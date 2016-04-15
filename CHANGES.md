@@ -1,5 +1,9 @@
 # homebrew-asterisk
 
+## 2016-04-15
+
+ * Asterisk 13.8.1 (Security Release)
+
 ## 2016-04-08
 
  * Travis CI: install PJSIP with --verbose, so we can debug it
