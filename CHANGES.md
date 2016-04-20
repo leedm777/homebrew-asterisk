@@ -1,5 +1,9 @@
 # homebrew-asterisk
 
+## 2016-04-20
+
+ * Asterisk 13.8.2
+
 ## 2016-04-15
 
  * Asterisk 13.8.1 (Security Release)
