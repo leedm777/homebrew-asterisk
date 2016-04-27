@@ -1,5 +1,11 @@
 # homebrew-asterisk
 
+## 2016-04-27
+
+ * #22 - workaround for PJSIP errors compiling with Xcode 7.3. I think this
+   isn't the best fix in the world, since I'm pretty sure that the install name
+   and runpath on the libs are wrong. But it works for now.
+
 ## 2016-04-20
 
  * Asterisk 13.8.2

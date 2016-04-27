@@ -12,6 +12,8 @@ class PjsipAsterisk < Formula
   depends_on "speex"
   depends_on "srtp"
 
+  patch :p0, :DATA
+
   def install
     ENV.j1
 
@@ -37,3 +39,44 @@ class PjsipAsterisk < Formula
     system "make", "all", "install"
   end
 end
+
+__END__
+
+With Xcode 7.3, PJSIP build started failing to find dependent libs. This patch
+lists them explicitly so that the linker can find them.
+
+Index: pjmedia/build/Makefile
+===================================================================
+--- pjmedia/build/Makefile	(revision 5280)
++++ pjmedia/build/Makefile	(working copy)
+@@ -128,6 +128,7 @@
+ export PJSDP_LDFLAGS += $(PJMEDIA_LDLIB) \
+ 			$(PJLIB_LDLIB) \
+ 			$(PJLIB_UTIL_LDLIB) \
++			$(PJNATH_LDLIB) \
+ 			$(_LDFLAGS)
+ 
+ 
+@@ -146,6 +147,8 @@
+ 			$(ILBC_CFLAGS) $(IPP_CFLAGS) $(G7221_CFLAGS)
+ export PJMEDIA_CODEC_LDFLAGS += $(PJMEDIA_LDLIB) \
+ 				$(PJLIB_LDLIB) \
++				$(PJLIB_UTIL_LDLIB) \
++				$(PJNATH_LDLIB) \
+ 				$(_LDFLAGS)
+ 
+ ###############################################################################
+Index: pjsip/build/Makefile
+===================================================================
+--- pjsip/build/Makefile	(revision 5280)
++++ pjsip/build/Makefile	(working copy)
+@@ -88,6 +88,9 @@
+ 			   $(PJMEDIA_LDLIB) \
+ 			   $(PJLIB_UTIL_LDLIB) \
+ 			   $(PJLIB_LDLIB) \
++			   $(PJMEDIA_VIDEODEV_LDLIB) \
++			   $(PJMEDIA_AUDIODEV_LDLIB) \
++			   $(PJNATH_LDLIB) \
+ 			   $(_LDFLAGS)
+ 
+ 
