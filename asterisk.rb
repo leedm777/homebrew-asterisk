@@ -57,7 +57,7 @@ class Asterisk < Formula
   depends_on "openssl"
   depends_on "pjsip-asterisk"
   depends_on "speex"
-  depends_on "srtp"
+  depends_on "srtp1"
 
   def install
     langs = [

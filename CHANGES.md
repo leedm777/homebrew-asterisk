@@ -1,5 +1,13 @@
 # homebrew-asterisk
 
+## 2016-05-05
+
+ * Adding srtp1 formula, since libsrtp2 has changes the file paths for all
+   the things. This has been [submitted to homebrew-versions][hv-srtp1], so
+   the formula here should be removed if that PR is accepted.
+
+   [hv-srtp1]: https://github.com/Homebrew/homebrew-versions/pull/1244
+
 ## 2016-04-27
 
  * #22 - workaround for PJSIP errors compiling with Xcode 7.3. I think this

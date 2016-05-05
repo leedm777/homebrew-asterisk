@@ -10,7 +10,7 @@ class PjsipAsterisk < Formula
   depends_on "openssl"
   depends_on "portaudio"
   depends_on "speex"
-  depends_on "srtp"
+  depends_on "srtp1"
 
   patch :p0, :DATA
 
