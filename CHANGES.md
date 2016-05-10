@@ -1,5 +1,11 @@
 # homebrew-asterisk
 
+## 2016-05-10
+
+ * Asterisk 13.9.0
+ * Changed the versions for devel and head installs, so that they won't
+   go stale over time.
+
 ## 2016-05-05
 
  * Adding srtp1 formula, since libsrtp2 has changes the file paths for all
