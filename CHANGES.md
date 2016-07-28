@@ -3,6 +3,7 @@
 ## 2016-07-28
 
  * Asterisk 13.10.0
+ * travis.yml: update to Xcode 7.3; OS X 10.11
 
 ## 2016-05-16
 
