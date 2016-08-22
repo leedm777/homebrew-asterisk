@@ -54,27 +54,21 @@ If you want to just run Asterisk occasionally, just start it up using
 
 ## Running as a service
 
-To have launchd start asterisk at login:
+To have launchd start asterisk now and restart at login:
 
-    mkdir -p ~/Library/LaunchAgents
-    ln -sfv /usr/local/opt/asterisk/*.plist ~/Library/LaunchAgents
+    $ brew services start leedm777/asterisk/asterisk
 
-Then to load asterisk now:
+To stop asterisk:
 
-    launchctl load ~/Library/LaunchAgents/homebrew.mxcl.asterisk.plist
+    $ brew services stop leedm777/asterisk/asterisk
 
 To reload asterisk after an upgrade:
 
-    launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.asterisk.plist
-    launchctl load ~/Library/LaunchAgents/homebrew.mxcl.asterisk.plist
+    $ brew services restart leedm777/asterisk/asterisk
 
 To connect to Asterisk running as a service:
 
-    /usr/local/sbin/asterisk -r
-
-To restart asterisk after a `core stop now`:
-
-    launchctl start homebrew.mxcl.asterisk
+    $ /usr/local/sbin/asterisk -r
 
 ## Uninstall
 

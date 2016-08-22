@@ -1,9 +1,10 @@
 # homebrew-asterisk
 
-## 2016-08-21
+## 2016-08-22
 
  * srtp1: As was foretold by prophecy, the srtp1 formula was merged into
    homebrew/versions. Removing srtp and instead using homebrew/versions/srtp15
+ * README: updated for the spiffy `brew services` command
 
 ## 2016-07-28
 
