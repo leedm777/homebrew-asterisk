@@ -1,5 +1,10 @@
 # homebrew-asterisk
 
+## 2016-08-21
+
+ * srtp1: As was foretold by prophecy, the srtp1 formula was merged into
+   homebrew/versions. Removing srtp and instead using homebrew/versions/srtp15
+
 ## 2016-07-28
 
  * Asterisk 13.10.0
