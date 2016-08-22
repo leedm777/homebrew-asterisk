@@ -20,6 +20,8 @@ before_install:
   - brew ls
 install:
   # install pjsip verbosely, in case we need to debug that build, too
+  # We also have to install it via the tap, b/c it won't be picked up as a
+  # dependency if we install it as ./pjsip-asterisk.rb
   - brew install pjsip-asterisk --verbose
   - brew install --only-dependencies ./asterisk.rb
 script:
