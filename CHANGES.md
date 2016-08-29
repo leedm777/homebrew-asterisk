@@ -1,5 +1,14 @@
 # homebrew-asterisk
 
+## 2016-08-29
+
+ * Removing iksemel. Google code took down the tarball, and I cannot find
+   another good source for it. The [GitHub project][iksemel] show zero activity
+   from the maintainer for nearly five years. Unless someone revives it, I'm
+   calling it dead :-(
+
+ [iksemel]: https://github.com/meduketto/iksemel
+
 ## 2016-08-22
 
  * srtp1: As was foretold by prophecy, the srtp1 formula was merged into
