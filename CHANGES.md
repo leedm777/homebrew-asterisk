@@ -1,9 +1,13 @@
 # homebrew-asterisk
 
+## 2016-09-02
+
+ * Asterisk 13.11.0
+
 ## 2016-08-29
 
  * Removing iksemel. Google code took down the tarball, and I cannot find
-   another good source for it. The [GitHub project][iksemel] show zero activity
+   another good source for it. The [GitHub project][iksemel] shows zero activity
    from the maintainer for nearly five years. Unless someone revives it, I'm
    calling it dead :-(
 
