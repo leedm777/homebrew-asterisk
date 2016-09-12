@@ -1,5 +1,9 @@
 # homebrew-asterisk
 
+## 2016-09-12
+
+ * Asterisk 13.11.2
+
 ## 2016-09-08
 
  * Asterisk 13.11.1 (Security Release)
