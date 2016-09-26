@@ -5,8 +5,8 @@ class Asterisk < Formula
   sha256 "be549d3dfdbe979e66f4516cdd3bfc060340f107a15041a9a9f54eee67120705"
 
   devel do
-    url "https://github.com/asterisk/asterisk.git", :branch => "13"
-    version "13-devel"
+    url "https://github.com/asterisk/asterisk.git", :branch => "14"
+    version "14-devel"
   end
 
   head do

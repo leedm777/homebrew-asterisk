@@ -3,6 +3,7 @@
 ## 2016-09-26
 
  * Asterisk 14.0.0
+ * Move devel branch to 14
 
 ## 2016-09-12
 
