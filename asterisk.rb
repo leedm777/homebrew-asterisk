@@ -4,6 +4,13 @@ class Asterisk < Formula
   url "http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-14.0.0.tar.gz"
   sha256 "be549d3dfdbe979e66f4516cdd3bfc060340f107a15041a9a9f54eee67120705"
 
+  stable do
+    patch do
+      url "https://github.com/asterisk/asterisk/commit/47689998a9167b7826df4cfaf6df4bc25c63b17c.patch"
+      sha256 "9d830f132e03f6f239a4c022fd4589b784ec22691c59c51177a69de320a4af1b"
+    end
+  end
+
   devel do
     url "https://github.com/asterisk/asterisk.git", :branch => "14"
     version "14-devel"
