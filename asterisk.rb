@@ -1,8 +1,8 @@
 class Asterisk < Formula
   desc "Open Source PBX and telephony toolkit"
   homepage "http://www.asterisk.org"
-  url "http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-14.0.0.tar.gz"
-  sha256 "be549d3dfdbe979e66f4516cdd3bfc060340f107a15041a9a9f54eee67120705"
+  url "http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-14.0.1.tar.gz"
+  sha256 "c66bc7b1dafac0259afeeaeae7b210723bc2a503465436ce601e41bd60b664b5"
 
   stable do
     patch do
