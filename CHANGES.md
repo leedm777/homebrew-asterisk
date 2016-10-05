@@ -1,5 +1,9 @@
 # homebrew-asterisk
 
+## 2016-10-05
+
+ * Asterisk 14.0.2
+
 ## 2016-09-27
 
  * Asterisk 14.0.1
