@@ -102,5 +102,13 @@ install via bottle, which is tons faster than building it from source.
     brew rm gcc
     brew install asterisk
 
+**Configure fails with `The Asterisk menuselect tool requires the 'libxml2' development package.`**
+
+This happens because of [a bug](libxml2-bug) with Xcode 8 on OSX 10.11 (El
+Capitan). Right now, the only solution is to upgrade to macOS 10.12 (Sierra),
+downgrade to Xcode 7.3, or do some pretty [terrifying edits](http://stackoverflow.com/q/39536144/115478)
+to your system libraries.
+
  [ast]: http://asterisk.org/
  [config-docs]: https://wiki.asterisk.org/wiki/x/cYXAAQ
+ [libxml2-bug]: https://github.com/leedm777/homebrew-asterisk/issues/23

@@ -1,5 +1,9 @@
 # homebrew-asterisk
 
+## 2016-10-10
+
+ * #23 - add README note about configure failures with libxml2
+
 ## 2016-10-05
 
  * Asterisk 14.0.2
