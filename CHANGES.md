@@ -1,5 +1,9 @@
 # homebrew-asterisk
 
+## 2016-10-26
+
+ * Asterisk 14.1.0. No longer requires patch for strdupa bug.
+
 ## 2016-10-10
 
  * #23 - add README note about configure failures with libxml2
