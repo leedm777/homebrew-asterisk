@@ -1,5 +1,10 @@
 # homebrew-asterisk
 
+## 2016-10-31
+
+ * Asterisk 14.1.1
+ * Happy Halloween
+
 ## 2016-10-26
 
  * Asterisk 14.1.0. No longer requires patch for strdupa bug.
