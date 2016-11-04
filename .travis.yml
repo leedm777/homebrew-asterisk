@@ -9,6 +9,8 @@ env:
   - EXTRA=
   - EXTRA=--devel
   - EXTRA=--HEAD
+  - EXTRA="--devel --with-dev-mode"
+  - EXTRA="--HEAD --with-dev-mode"
 before_install:
   - env
   - brew update
