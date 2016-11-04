@@ -9,6 +9,8 @@ env:
   - EXTRA=
   - EXTRA=--devel
   - EXTRA=--HEAD
+  - EXTRA="--devel --with-dev-mode"
+  - EXTRA="--HEAD --with-dev-mode"
 before_install:
   # Fetch the latest Homebrew, for the freshest bugs
   - export HOMEBREW_DEVELOPER=1
