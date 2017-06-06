@@ -1,8 +1,8 @@
 class Asterisk < Formula
   desc "Open Source PBX and telephony toolkit"
   homepage "http://www.asterisk.org"
-  url "http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-14.2.0.tar.gz"
-  sha256 "ae65fc88fd0e73ae2b8e11be62ecaa0e60b53115f6e85d9754179010124c75f1"
+  url "http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-14.5.0.tar.gz"
+  sha256 "46b6fb42a0a8511091295c9af2a80a233ded830954630616c696f2947bf37e8b"
 
   devel do
     url "https://github.com/asterisk/asterisk.git", :branch => "14"
@@ -56,7 +56,8 @@ class Asterisk < Formula
   depends_on "openssl"
   depends_on "pjsip-asterisk"
   depends_on "speex"
-  depends_on "homebrew/versions/srtp15"
+  depends_on "srtp@1.5"
+  depends_on "sqlite"
 
   def install
     langs = [
@@ -77,14 +78,8 @@ class Asterisk < Formula
       optimize = false
     end
 
-    openssl = Formula["openssl"]
-    pjsip = Formula["pjsip-asterisk"]
-
     # Some Asterisk code doesn't follow strict aliasing rules
     ENV.append "CFLAGS", "-fno-strict-aliasing"
-
-    # Use brew's pkg-config
-    ENV["PKG_CONFIG"] = "#{HOMEBREW_PREFIX}/bin/pkg-config"
 
     system "./configure", "--prefix=#{prefix}",
                           "--sysconfdir=#{etc}",
@@ -92,8 +87,11 @@ class Asterisk < Formula
                           "--datadir=#{share}/#{name}",
                           "--docdir=#{doc}/asterisk",
                           "--enable-dev-mode=#{dev_mode ? 'yes' : 'no'}",
-                          "--with-ssl=#{openssl.opt_prefix}",
-                          "--with-pjproject=#{pjsip.opt_prefix}",
+                          "--with-crypto",
+                          "--with-ssl",
+                          "--with-pjproject",
+                          "--with-sqlite3",
+                          "--without-sqlite",
                           "--without-gmime",
                           "--without-gtk2",
                           "--without-iodbc",
