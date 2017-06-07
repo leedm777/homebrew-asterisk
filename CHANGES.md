@@ -1,5 +1,13 @@
 # homebrew-asterisk
 
+## 2017-06-08
+
+ * pjsip 2.6.0
+ * Adjusted config to better match Asterisk's bundled pjsip
+ * Added .editorconfig
+ * Fixes for deprecated brew stuff, because it's been forever since this build
+   has actually worked
+
 ## 2016-11-28
 
  * Asterisk 14.2.0
