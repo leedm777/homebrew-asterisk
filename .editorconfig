@@ -1,0 +1,25 @@
+# EditorConfig is awesome: http://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = false
+max_line_length = 80
+indent_style = space
+indent_size = 2
+tab_width = 8
+
+[*.{md,py}]
+indent_size = 4
+indent_style = space
+
+[Makefile]
+indent_style = tab
+
+[.git/COMMIT_EDITMSG]
+max_line_length = 72
