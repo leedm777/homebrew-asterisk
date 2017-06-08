@@ -1,12 +1,24 @@
 # homebrew-asterisk
 
+## 2017-06-10
+
+ * Asterisk 14.5.0
+   * patch for BIND8 support
+   * Instead of all the pkg-config mess I was doing myself, rely on the
+     superenv to get everything into the include and lib path correctly.
+ * travis: switch to Xcode 8.3 as a build environment
+   * uninstall oclint, because it conflicts with gcc
+   * Set HOMEBREW_DEVELOPER, so we can update to brew between tags
+     * Always opt for the freshest bugs
+ * More brew-deprecation related fixes
+
 ## 2017-06-08
 
  * pjsip 2.6.0
- * Adjusted config to better match Asterisk's bundled pjsip
+   * Adjusted config to better match Asterisk's bundled pjsip
  * Added .editorconfig
- * Fixes for deprecated brew stuff, because it's been forever since this build
-   has actually worked
+ * Various fixes for stuff that's been deprecated from Homebrew, since it's
+   been a while since I've done anything with this tap.
 
 ## 2016-11-28
 
