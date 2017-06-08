@@ -87,6 +87,7 @@ class Asterisk < Formula
     # Some Asterisk code doesn't follow strict aliasing rules
     ENV.append "CFLAGS", "-fno-strict-aliasing"
 
+    system "which", "gcc-7"
     system "./configure", "--prefix=#{prefix}",
                           "--sysconfdir=#{etc}",
                           "--localstatedir=#{var}",

@@ -12,8 +12,6 @@ another, aren't the best fit for going into Homebrew itself.
     brew tap leedm777/homebrew-asterisk
     brew install asterisk
 
-Installation will automagically add the `homebrew/versions` tap.
-
 ## Installation options
 
  * `--with-clang` - Compile with clang instead of gcc
