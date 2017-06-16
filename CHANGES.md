@@ -1,5 +1,10 @@
 # homebrew-asterisk
 
+## 2017-06-16
+
+ * Only apply BIND8 patch for stable, since the PR has been merged to 14 and
+   master.
+
 ## 2017-06-10
 
  * Asterisk 14.5.0

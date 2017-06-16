@@ -15,9 +15,11 @@ class Asterisk < Formula
   end
 
   # CFLAGS for BIND8 support
-  patch do
-    url "https://github.com/leedm777/asterisk/commit/0522872d558f13e02e79b485aa93cfd6e391cfc8.patch"
-    sha256 "c8be941dccac374e73fbc552371bf36727ea0dbb5d4876380c264c727b69d4a9"
+  stable do
+    patch do
+      url "https://github.com/leedm777/asterisk/commit/0522872d558f13e02e79b485aa93cfd6e391cfc8.patch"
+      sha256 "c8be941dccac374e73fbc552371bf36727ea0dbb5d4876380c264c727b69d4a9"
+    end
   end
 
   option "with-dev-mode", "Enable dev mode in Asterisk"
