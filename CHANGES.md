@@ -4,6 +4,8 @@
 
  * Only apply BIND8 patch for stable, since the PR has been merged to 14 and
    master.
+ * Removed a debug print that slipped in there, and accidentally having
+   dev-mode added to the matrix.
 
 ## 2017-06-10
 
