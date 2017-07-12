@@ -1,8 +1,8 @@
 class Asterisk < Formula
   desc "Open Source PBX and telephony toolkit"
   homepage "http://www.asterisk.org"
-  url "http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-14.5.0.tar.gz"
-  sha256 "46b6fb42a0a8511091295c9af2a80a233ded830954630616c696f2947bf37e8b"
+  url "http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-14.6.0.tar.gz"
+  sha256 "46543dac3ca42124bc9439ecbc8c3869f2588e14293ae8514b266c77559372b4"
 
   devel do
     url "https://github.com/asterisk/asterisk.git", :branch => "14"
@@ -12,14 +12,6 @@ class Asterisk < Formula
   head do
     url "https://github.com/asterisk/asterisk.git"
     version "head"
-  end
-
-  # CFLAGS for BIND8 support
-  stable do
-    patch do
-      url "https://github.com/leedm777/asterisk/commit/0522872d558f13e02e79b485aa93cfd6e391cfc8.patch"
-      sha256 "c8be941dccac374e73fbc552371bf36727ea0dbb5d4876380c264c727b69d4a9"
-    end
   end
 
   option "with-dev-mode", "Enable dev mode in Asterisk"

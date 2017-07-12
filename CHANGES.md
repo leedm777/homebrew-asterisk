@@ -1,5 +1,10 @@
 # homebrew-asterisk
 
+## 2017-07-14
+
+ * Asterisk 14.6.0. Removes patch for BIND8 support, since that's been merged
+   upstream.
+
 ## 2017-06-16
 
  * Only apply BIND8 patch for stable, since the PR has been merged to 14 and
