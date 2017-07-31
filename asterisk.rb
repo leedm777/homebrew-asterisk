@@ -6,7 +6,7 @@ class Asterisk < Formula
 
   devel do
     url "https://github.com/asterisk/asterisk.git", :branch => "14"
-    version "14-devel"
+    version "14.7-devel"
   end
 
   head do
@@ -42,10 +42,14 @@ class Asterisk < Formula
   option "with-sounds-extras", "Install extra sound packages"
 
   if build.without? "clang"
-    fails_with :llvm
-    fails_with :clang
+    fails_with :clang do
+      build 9999999 # unconditionally switch to a different compiler
+      cause "avoiding clang as the compiler"
+    end
     # :gcc just matches on apple-gcc42
-    fails_with :gcc
+    fails_with :gcc do
+      cause "Apple's GCC 4.2 is too old to build Asterisk reliably"
+    end
 
     depends_on "gcc" => :build
   end
@@ -60,12 +64,12 @@ class Asterisk < Formula
   depends_on "sqlite"
 
   def install
-    langs = [
-      "en", "en-au", "en-gb", "es", "fr", "it", "ru", "ja", "sv"
-    ].select { |lang| build.with? "sounds-#{lang}" }
-    formats = [
-      "gsm", "wav", "ulaw", "alaw", "g729", "g722", "sln16", "siren7", "siren14"
-    ].select { |format| build.with? "sounds-#{format}" }
+    langs = %w[en en-au en-gb es fr it ru ja sv].select do |lang|
+      build.with? "sounds-#{lang}"
+    end
+    formats = %w[gsm wav ulaw alaw g729 g722 sln16 siren7 siren14].select do |format|
+      build.with? "sounds-#{format}"
+    end
 
     dev_mode = false
     optimize = true
@@ -74,9 +78,7 @@ class Asterisk < Formula
       optimize = false
     end
 
-    if build.without? "optimizations"
-      optimize = false
-    end
+    optimize = false if build.without? "optimizations"
 
     # Some Asterisk code doesn't follow strict aliasing rules
     ENV.append "CFLAGS", "-fno-strict-aliasing"
@@ -86,7 +88,7 @@ class Asterisk < Formula
                           "--localstatedir=#{var}",
                           "--datadir=#{share}/#{name}",
                           "--docdir=#{doc}/asterisk",
-                          "--enable-dev-mode=#{dev_mode ? 'yes' : 'no'}",
+                          "--enable-dev-mode=#{dev_mode ? "yes" : "no"}",
                           "--with-crypto",
                           "--with-ssl",
                           "--with-pjproject",
@@ -111,7 +113,7 @@ class Asterisk < Formula
     system "menuselect/menuselect",
            "--disable", "BUILD_NATIVE", "menuselect.makeopts"
 
-    if not optimize
+    unless optimize
       system "menuselect/menuselect",
              "--enable", "DONT_OPTIMIZE", "menuselect.makeopts"
     end
@@ -125,20 +127,20 @@ class Asterisk < Formula
              "--enable-category", "MENUSELECT_TESTS", "menuselect.makeopts"
     end
 
-    formats.each { |format|
+    formats.each do |format|
       system "menuselect/menuselect",
              "--enable", "MOH-OPSOUND-#{format.upcase}", "menuselect.makeopts"
 
-      langs.each { |lang|
+      langs.each do |lang|
         system "menuselect/menuselect",
                "--enable", "CORE-SOUNDS-#{lang.upcase}-#{format.upcase}", "menuselect.makeopts"
 
-        if build.with? 'sounds-extras'
+        if build.with? "sounds-extras"
           system "menuselect/menuselect",
                  "--enable", "EXTRA-SOUNDS-#{lang.upcase}-#{format.upcase}", "menuselect.makeopts"
         end
-      }
-    }
+      end
+    end
 
     system "make", "all", "NOISY_BUILD=yes"
     system "make", "install", "samples"
@@ -146,6 +148,8 @@ class Asterisk < Formula
     # Replace Cellar references to opt/asterisk
     system "sed", "-i", "", "s#Cellar/asterisk/[^/]*/#opt/asterisk/#", "#{etc}/asterisk/asterisk.conf"
   end
+
+  plist_options :startup => false, :manual => "asterisk -r"
 
   def plist; <<-EOS.undent
     <?xml version="1.0" encoding="UTF-8"?>

@@ -20,75 +20,75 @@ class PjsipAsterisk < Formula
     # Build for not-debug
     ENV["CFLAGS"] = "-O2 -DNDEBUG"
 
-    config_site = <<-EOF
-#include <sys/select.h>
+    config_site = <<-EOF.undent
+      #include <sys/select.h>
 
-/*
- * Defining PJMEDIA_HAS_SRTP to 0 does NOT disable Asterisk's ability to use srtp.
- * It only disables the pjmedia srtp transport which Asterisk doesn't use.
- * The reason for the disable is that while Asterisk works fine with older libsrtp
- * versions, newer versions of pjproject won't compile with them.
- */
-#define PJMEDIA_HAS_SRTP 0
+      /*
+       * Defining PJMEDIA_HAS_SRTP to 0 does NOT disable Asterisk's ability to use srtp.
+       * It only disables the pjmedia srtp transport which Asterisk doesn't use.
+       * The reason for the disable is that while Asterisk works fine with older libsrtp
+       * versions, newer versions of pjproject won't compile with them.
+       */
+      #define PJMEDIA_HAS_SRTP 0
 
-/*
- * Defining PJMEDIA_HAS_WEBRTC_AEC to 0 does NOT disable Asterisk's ability to use
- * webrtc.  It only disables the pjmedia webrtc transport which Asterisk doesn't use.
- */
-#define PJMEDIA_HAS_WEBRTC_AEC 0
+      /*
+       * Defining PJMEDIA_HAS_WEBRTC_AEC to 0 does NOT disable Asterisk's ability to use
+       * webrtc.  It only disables the pjmedia webrtc transport which Asterisk doesn't use.
+       */
+      #define PJMEDIA_HAS_WEBRTC_AEC 0
 
-#define PJ_HAS_IPV6 1
-#define NDEBUG 1
-#define PJ_MAX_HOSTNAME (256)
-#define PJSIP_MAX_URL_SIZE (512)
-#define PJ_IOQUEUE_MAX_HANDLES  (FD_SETSIZE)
-#define PJ_IOQUEUE_HAS_SAFE_UNREG 1
-#define PJ_IOQUEUE_MAX_EVENTS_IN_SINGLE_POLL (16)
+      #define PJ_HAS_IPV6 1
+      #define NDEBUG 1
+      #define PJ_MAX_HOSTNAME (256)
+      #define PJSIP_MAX_URL_SIZE (512)
+      #define PJ_IOQUEUE_MAX_HANDLES  (FD_SETSIZE)
+      #define PJ_IOQUEUE_HAS_SAFE_UNREG 1
+      #define PJ_IOQUEUE_MAX_EVENTS_IN_SINGLE_POLL (16)
 
-#define PJ_SCANNER_USE_BITWISE  0
-#define PJ_OS_HAS_CHECK_STACK   0
+      #define PJ_SCANNER_USE_BITWISE  0
+      #define PJ_OS_HAS_CHECK_STACK   0
 
-#ifndef PJ_LOG_MAX_LEVEL
-#define PJ_LOG_MAX_LEVEL                6
-#endif
+      #ifndef PJ_LOG_MAX_LEVEL
+      #define PJ_LOG_MAX_LEVEL                6
+      #endif
 
-#define PJ_ENABLE_EXTRA_CHECK   1
-#define PJSIP_MAX_TSX_COUNT             ((64*1024)-1)
-#define PJSIP_MAX_DIALOG_COUNT  ((64*1024)-1)
-#define PJSIP_UDP_SO_SNDBUF_SIZE        (512*1024)
-#define PJSIP_UDP_SO_RCVBUF_SIZE        (512*1024)
-#define PJ_DEBUG                        0
-#define PJSIP_SAFE_MODULE               0
-#define PJ_HAS_STRICMP_ALNUM            0
+      #define PJ_ENABLE_EXTRA_CHECK   1
+      #define PJSIP_MAX_TSX_COUNT             ((64*1024)-1)
+      #define PJSIP_MAX_DIALOG_COUNT  ((64*1024)-1)
+      #define PJSIP_UDP_SO_SNDBUF_SIZE        (512*1024)
+      #define PJSIP_UDP_SO_RCVBUF_SIZE        (512*1024)
+      #define PJ_DEBUG                        0
+      #define PJSIP_SAFE_MODULE               0
+      #define PJ_HAS_STRICMP_ALNUM            0
 
-/*
- * Do not ever enable PJ_HASH_USE_OWN_TOLOWER because the algorithm is
- * inconsistently used when calculating the hash value and doesn't
- * convert the same characters as pj_tolower()/tolower().  Thus you
- * can get different hash values if the string hashed has certain
- * characters in it.  (ASCII '@', '[', '\\', ']', '^', and '_')
- */
-#undef PJ_HASH_USE_OWN_TOLOWER
+      /*
+       * Do not ever enable PJ_HASH_USE_OWN_TOLOWER because the algorithm is
+       * inconsistently used when calculating the hash value and doesn't
+       * convert the same characters as pj_tolower()/tolower().  Thus you
+       * can get different hash values if the string hashed has certain
+       * characters in it.  (ASCII '@', '[', '\\', ']', '^', and '_')
+       */
+      #undef PJ_HASH_USE_OWN_TOLOWER
 
-/*
-  It is imperative that PJSIP_UNESCAPE_IN_PLACE remain 0 or undefined.
-  Enabling it will result in SEGFAULTS when URIs containing escape sequences are encountered.
-*/
-#undef PJSIP_UNESCAPE_IN_PLACE
-#define PJSIP_MAX_PKT_LEN                       6000
+      /*
+        It is imperative that PJSIP_UNESCAPE_IN_PLACE remain 0 or undefined.
+        Enabling it will result in SEGFAULTS when URIs containing escape sequences are encountered.
+      */
+      #undef PJSIP_UNESCAPE_IN_PLACE
+      #define PJSIP_MAX_PKT_LEN                       6000
 
-#undef PJ_TODO
-#define PJ_TODO(x)
+      #undef PJ_TODO
+      #define PJ_TODO(x)
 
-/* Defaults too low for WebRTC */
-#define PJ_ICE_MAX_CAND 32
-#define PJ_ICE_MAX_CHECKS (PJ_ICE_MAX_CAND * PJ_ICE_MAX_CAND)
+      /* Defaults too low for WebRTC */
+      #define PJ_ICE_MAX_CAND 32
+      #define PJ_ICE_MAX_CHECKS (PJ_ICE_MAX_CAND * PJ_ICE_MAX_CAND)
 
-/* Increase limits to allow more formats */
-#define PJMEDIA_MAX_SDP_FMT   64
-#define PJMEDIA_MAX_SDP_BANDW   4
-#define PJMEDIA_MAX_SDP_ATTR   (PJMEDIA_MAX_SDP_FMT*2 + 4)
-#define PJMEDIA_MAX_SDP_MEDIA   16
+      /* Increase limits to allow more formats */
+      #define PJMEDIA_MAX_SDP_FMT   64
+      #define PJMEDIA_MAX_SDP_BANDW   4
+      #define PJMEDIA_MAX_SDP_ATTR   (PJMEDIA_MAX_SDP_FMT*2 + 4)
+      #define PJMEDIA_MAX_SDP_MEDIA   16
     EOF
     (buildpath/"pjlib/include/pj/config_site.h").write(config_site)
 
