@@ -91,6 +91,7 @@ class Asterisk < Formula
                           "--enable-dev-mode=#{dev_mode ? "yes" : "no"}",
                           "--with-crypto",
                           "--with-ssl",
+                          "--without-pjproject-bundled",
                           "--with-pjproject",
                           "--with-sqlite3",
                           "--without-sqlite",

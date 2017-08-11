@@ -1,5 +1,10 @@
 # homebrew-asterisk
 
+## 2017-08-13
+
+ * Add `--without-pjproject-bundled` configure flag. The default changed in
+   Asterisk 15, and the bundled PJSIP does not build on macOS :-(
+
 ## 2017-07-14
 
  * Asterisk 14.6.0. Removes patch for BIND8 support, since that's been merged
