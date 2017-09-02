@@ -1,5 +1,9 @@
 # homebrew-asterisk
 
+## 2017-09-01
+
+ * Asterisk 14.6.1. Security Release!!!
+
 ## 2017-08-13
 
  * Add `--without-pjproject-bundled` configure flag. The default changed in
