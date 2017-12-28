@@ -1,10 +1,12 @@
 os:
   - osx
-osx_image: xcode8.3
+osx_image: xcode9.2
 language: c
 compiler:
   - clang
-  - gcc
+  # GCC on an Xcode 9.2 machine has trouble with syslog.h
+  # See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82200
+  #- gcc
 env:
   - EXTRA=
   - EXTRA=--devel

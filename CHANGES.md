@@ -1,5 +1,9 @@
 # homebrew-asterisk
 
+## 2017-12-27
+
+ * Update to Xcode 9.2
+
 ## 2017-08-13
 
  * Add `--without-pjproject-bundled` configure flag. The default changed in
