@@ -1,12 +1,20 @@
 os:
   - osx
-osx_image: xcode9.2
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode8.3
+      compiler:
+        - clang
+        - gcc
+    - os: osx
+      osx_image: xcode9.2
+      compiler:
+        - clang
+        # GCC on an Xcode 9.2 machine has trouble with syslog.h
+        # See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82200
+        #- gcc
 language: c
-compiler:
-  - clang
-  # GCC on an Xcode 9.2 machine has trouble with syslog.h
-  # See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82200
-  #- gcc
 env:
   - EXTRA=
   - EXTRA=--devel
@@ -19,6 +27,8 @@ before_install:
   # on the xcode8.3 machine, oclint breaks the install of gcc
   - brew cask uninstall oclint
   - brew tap leedm777/homebrew-asterisk
+  # checkout the current branch for installing PJSIP
+  - git -C $(brew --prefix)/Homebrew/Library/Taps/leedm777/homebrew-asterisk pull origin $(git rev-parse --abbrev-ref HEAD)
   # upgrade only outdated dependencies
   - comm -12 <(brew deps --include-build ./asterisk.rb) <(brew outdated) | xargs brew upgrade
   # print some versions, because debugging
