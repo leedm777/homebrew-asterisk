@@ -1,8 +1,6 @@
 os:
   - osx
-osx_image:
-  - xcode8.3
-  - xcode9.2
+osx_image: xcode8.3
 compiler:
   - clang
   - gcc
@@ -11,11 +9,18 @@ env:
   - EXTRA=--devel
   - EXTRA=--HEAD
 matrix:
-  exclude:
+  include:
     # GCC on an Xcode 9.2 machine has trouble with syslog.h
     # See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82200
     - osx_image: xcode9.2
-      compiler: gcc
+      compiler: clang
+      env: EXTRA=
+    - osx_image: xcode9.2
+      compiler: clang
+      env: EXTRA=--devel
+    - osx_image: xcode9.2
+      compiler: clang
+      env: EXTRA=--HEAD
 language: c
 before_install:
   # Fetch the latest Homebrew, for the freshest bugs
