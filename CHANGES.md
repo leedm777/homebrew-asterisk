@@ -4,6 +4,8 @@
 
  * Update to Xcode 9.2
  * Update pjsip to 2.7.1
+ * Update asterisk to 15.1.5
+ * Update dependencies
 
 ## 2017-08-13
 

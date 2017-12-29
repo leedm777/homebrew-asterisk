@@ -1,17 +1,22 @@
 class Asterisk < Formula
   desc "Open Source PBX and telephony toolkit"
   homepage "http://www.asterisk.org"
-  url "http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-14.6.0.tar.gz"
-  sha256 "46543dac3ca42124bc9439ecbc8c3869f2588e14293ae8514b266c77559372b4"
+  url "http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-15.1.5.tar.gz"
+  sha256 "f1ef579fa635a54c6c149b47f23f3f022e5e1ad0ef762122b2b2f2410c4fa759"
 
   devel do
-    url "https://github.com/asterisk/asterisk.git", :branch => "14"
-    version "14.7-devel"
+    url "https://github.com/asterisk/asterisk.git", :branch => "15"
+    version "15-devel"
   end
 
   head do
     url "https://github.com/asterisk/asterisk.git"
     version "head"
+  end
+
+  patch do
+    url "https://gist.githubusercontent.com/leedm777/9e72cd18d056c54f6a6ae67ee2766957/raw/b79a9fd04e0c5e2b3f350b5f2a9d3cdc53cb1004/15-macos-fixes.diff"
+    sha256 "ee1aeea625f5bfeccea3baae55fbd2f0984ec0a1c1852d12b2a4b8f5e28f11a2"
   end
 
   option "with-dev-mode", "Enable dev mode in Asterisk"
