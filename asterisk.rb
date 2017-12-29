@@ -7,11 +7,35 @@ class Asterisk < Formula
   devel do
     url "https://github.com/asterisk/asterisk.git", :branch => "15"
     version "15-devel"
+
+    # Lots of fixes for macOS
+    patch do
+      url "https://github.com/leedm777/asterisk/commit/8fa44fe8c862212ae6b6225db842ff5a77c2cfe5.diff"
+      sha256 "b522292fd208b17fd1a56d9c9fb9c659969bd16e56a9a16c1eabd621b20c8dc0"
+    end
+
+      # More macOS fixes
+    patch do
+      url "https://github.com/leedm777/asterisk/commit/5e9d11fb518f8072d0f3d57ec4c3303431e849d4.diff"
+      sha256 "e2bc01cccfa699990aea3513ece689ebcf1821620148ea1c4c7d02c7f8f7340b"
+    end
   end
 
   head do
     url "https://github.com/asterisk/asterisk.git"
     version "head"
+
+    # Lots of fixes for macOS
+    patch do
+      url "https://github.com/leedm777/asterisk/commit/8fa44fe8c862212ae6b6225db842ff5a77c2cfe5.diff"
+      sha256 "b522292fd208b17fd1a56d9c9fb9c659969bd16e56a9a16c1eabd621b20c8dc0"
+    end
+
+    # More macOS fixes
+    patch do
+      url "https://github.com/leedm777/asterisk/commit/5e9d11fb518f8072d0f3d57ec4c3303431e849d4.diff"
+      sha256 "e2bc01cccfa699990aea3513ece689ebcf1821620148ea1c4c7d02c7f8f7340b"
+    end
   end
 
   stable do
