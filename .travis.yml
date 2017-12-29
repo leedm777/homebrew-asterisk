@@ -1,22 +1,22 @@
 os:
   - osx
-matrix:
-  include:
-    - os: osx
-      osx_image: xcode8.3
-    - os: osx
-      osx_image: xcode9.2
-      # GCC on an Xcode 9.2 machine has trouble with syslog.h
-      # See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82200
-      compiler: clang
+osx_image:
+  - xcode8.3
+  - xcode9.2
 compiler:
   - clang
   - gcc
-language: c
 env:
   - EXTRA=
   - EXTRA=--devel
   - EXTRA=--HEAD
+matrix:
+  exclude:
+    # GCC on an Xcode 9.2 machine has trouble with syslog.h
+    # See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82200
+    - osx_image: xcode9.2
+      compiler: gcc
+language: c
 before_install:
   # Fetch the latest Homebrew, for the freshest bugs
   - export HOMEBREW_DEVELOPER=1
