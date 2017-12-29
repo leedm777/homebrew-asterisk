@@ -57,11 +57,12 @@ class Asterisk < Formula
   depends_on "pkg-config" => :build
 
   depends_on "jansson"
+  depends_on "libgsm"
   depends_on "openssl"
   depends_on "pjsip-asterisk"
   depends_on "speex"
-  depends_on "srtp@1.5"
   depends_on "sqlite"
+  depends_on "srtp"
 
   def install
     langs = %w[en en-au en-gb es fr it ru ja sv].select do |lang|
