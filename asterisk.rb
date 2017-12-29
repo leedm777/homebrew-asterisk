@@ -14,6 +14,35 @@ class Asterisk < Formula
     version "head"
   end
 
+  stable do
+    # from 15 branch
+    # tests: Fix warnings found on Mac
+    patch do
+      url "https://github.com/asterisk/asterisk/commit/ef4dc43a756c61defa8c6cc93025725924e2285c.diff"
+      sha256 "b87d8793e4383ddd466ada0444da96ae3dea9e4bb28d81c9ac743c74f9ff5662"
+    end
+
+    # from 15 branch
+    # iostream: Fix ast_iostream_printf declaration
+    patch do
+      url "https://github.com/asterisk/asterisk/commit/9da69ac6c16e008c72ec8fda2d34b1036cdbfde3.diff"
+      sha256 "920c01fc62844948472a43682ec53d7acc87e134c0cae091d304327b09bfd436"
+    end
+
+    # from 15 branch
+    # res_fax: Remove checks for unsigned values being >= 0
+    patch do
+      url "https://github.com/asterisk/asterisk/commit/85d675b14c7f946b86cc371a43aaa7f5d314d8c2.diff"
+      sha256 "e791cf4063f3c57ea5eb78c5063f391af1a0dd6d25d64f140f29efa73c6564ba"
+    end
+
+    # Lots of fixes for macOS
+    patch do
+      url "https://github.com/leedm777/asterisk/commit/8fa44fe8c862212ae6b6225db842ff5a77c2cfe5.diff"
+      sha256 "b522292fd208b17fd1a56d9c9fb9c659969bd16e56a9a16c1eabd621b20c8dc0"
+    end
+  end
+
   patch do
     url "https://gist.githubusercontent.com/leedm777/9e72cd18d056c54f6a6ae67ee2766957/raw/b79a9fd04e0c5e2b3f350b5f2a9d3cdc53cb1004/15-macos-fixes.diff"
     sha256 "ee1aeea625f5bfeccea3baae55fbd2f0984ec0a1c1852d12b2a4b8f5e28f11a2"
