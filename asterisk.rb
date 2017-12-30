@@ -4,20 +4,20 @@ class Asterisk < Formula
   url "http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-15.1.5.tar.gz"
   sha256 "f1ef579fa635a54c6c149b47f23f3f022e5e1ad0ef762122b2b2f2410c4fa759"
 
+  # Fixes needed for stable, 15 branch, and master
+  patch do
+    url "https://github.com/leedm777/asterisk/commit/cc159e4152e9f071228eec47fdaf07b3974e27db.patch"
+    sha256 "cf8c444fc7fe38d5761852d780fb4e8284f43df716f1a649e862ec186158f711"
+  end
+
   devel do
     url "https://github.com/asterisk/asterisk.git", :branch => "15"
     version "15-devel"
 
-    # Lots of fixes for macOS
+    # Fixes for bugs introduced on 15 branch
     patch do
-      url "https://github.com/leedm777/asterisk/commit/8fa44fe8c862212ae6b6225db842ff5a77c2cfe5.diff"
-      sha256 "b522292fd208b17fd1a56d9c9fb9c659969bd16e56a9a16c1eabd621b20c8dc0"
-    end
-
-      # More macOS fixes
-    patch do
-      url "https://github.com/leedm777/asterisk/commit/5e9d11fb518f8072d0f3d57ec4c3303431e849d4.diff"
-      sha256 "e2bc01cccfa699990aea3513ece689ebcf1821620148ea1c4c7d02c7f8f7340b"
+      url "https://github.com/leedm777/asterisk/commit/5e9d11fb518f8072d0f3d57ec4c3303431e849d4.patch"
+      sha256 "3b3fd91ea4580572baefb85adf8d7ae544e38255efa4d9f071a560b1cd05ea9e"
     end
   end
 
@@ -25,51 +25,38 @@ class Asterisk < Formula
     url "https://github.com/asterisk/asterisk.git"
     version "head"
 
-    # Lots of fixes for macOS
+    # Fixes for bugs introduced on 15 branch
     patch do
-      url "https://github.com/leedm777/asterisk/commit/8fa44fe8c862212ae6b6225db842ff5a77c2cfe5.diff"
-      sha256 "b522292fd208b17fd1a56d9c9fb9c659969bd16e56a9a16c1eabd621b20c8dc0"
-    end
-
-    # More macOS fixes
-    patch do
-      url "https://github.com/leedm777/asterisk/commit/5e9d11fb518f8072d0f3d57ec4c3303431e849d4.diff"
-      sha256 "e2bc01cccfa699990aea3513ece689ebcf1821620148ea1c4c7d02c7f8f7340b"
+      url "https://github.com/leedm777/asterisk/commit/5e9d11fb518f8072d0f3d57ec4c3303431e849d4.patch"
+      sha256 "3b3fd91ea4580572baefb85adf8d7ae544e38255efa4d9f071a560b1cd05ea9e"
     end
   end
 
+  # backport fixes that are already on the 15 branch
   stable do
-    # from 15 branch
     # tests: Fix warnings found on Mac
     patch do
-      url "https://github.com/asterisk/asterisk/commit/ef4dc43a756c61defa8c6cc93025725924e2285c.diff"
-      sha256 "b87d8793e4383ddd466ada0444da96ae3dea9e4bb28d81c9ac743c74f9ff5662"
+      url "https://github.com/asterisk/asterisk/commit/ef4dc43a756c61defa8c6cc93025725924e2285c.patch"
+      sha256 "fe886362e4979e750f3f053313180e89c2667e3dc58158cf73796dfdc97fa14a"
     end
 
-    # from 15 branch
     # iostream: Fix ast_iostream_printf declaration
     patch do
-      url "https://github.com/asterisk/asterisk/commit/9da69ac6c16e008c72ec8fda2d34b1036cdbfde3.diff"
-      sha256 "920c01fc62844948472a43682ec53d7acc87e134c0cae091d304327b09bfd436"
+      url "https://github.com/asterisk/asterisk/commit/9da69ac6c16e008c72ec8fda2d34b1036cdbfde3.patch"
+      sha256 "7ef07c38dbcc7b714245695127cb25bf4642bc3a3aed4c8814158d0a7305aae8"
     end
 
-    # from 15 branch
     # res_fax: Remove checks for unsigned values being >= 0
     patch do
-      url "https://github.com/asterisk/asterisk/commit/85d675b14c7f946b86cc371a43aaa7f5d314d8c2.diff"
-      sha256 "e791cf4063f3c57ea5eb78c5063f391af1a0dd6d25d64f140f29efa73c6564ba"
+      url "https://github.com/asterisk/asterisk/commit/85d675b14c7f946b86cc371a43aaa7f5d314d8c2.patch"
+      sha256 "3011e3a8c234687cefa1202dff25159da40462594ec89b9d9d6b8b736176920a"
     end
 
-    # Lots of fixes for macOS
+    # app_minivm: Fix possible uninitialized return value
     patch do
-      url "https://github.com/leedm777/asterisk/commit/8fa44fe8c862212ae6b6225db842ff5a77c2cfe5.diff"
-      sha256 "b522292fd208b17fd1a56d9c9fb9c659969bd16e56a9a16c1eabd621b20c8dc0"
+      url "https://github.com/asterisk/asterisk/commit/19ba25dd962895d9a25b88678f7a49d21f7adc54.patch"
+      sha256 "70bd3c397c1e44a6bb8bdee06c221fa50994c485fbf98c7defd462dd96e3c2ce"
     end
-  end
-
-  patch do
-    url "https://gist.githubusercontent.com/leedm777/9e72cd18d056c54f6a6ae67ee2766957/raw/b79a9fd04e0c5e2b3f350b5f2a9d3cdc53cb1004/15-macos-fixes.diff"
-    sha256 "ee1aeea625f5bfeccea3baae55fbd2f0984ec0a1c1852d12b2a4b8f5e28f11a2"
   end
 
   option "with-dev-mode", "Enable dev mode in Asterisk"
