@@ -31,7 +31,7 @@ before_install:
   - brew cask uninstall oclint
   - brew tap leedm777/homebrew-asterisk
   # checkout the current branch for installing PJSIP
-  - git -C $(brew --prefix)/Homebrew/Library/Taps/leedm777/homebrew-asterisk pull origin $(git rev-parse --abbrev-ref HEAD)
+  - git -C $(brew --prefix)/Homebrew/Library/Taps/leedm777/homebrew-asterisk pull origin ${TRAVIS_BRANCH}
   # upgrade only outdated dependencies
   - comm -12 <(brew deps --include-build ./asterisk.rb) <(brew outdated) | xargs brew upgrade
   # print some versions, because debugging
