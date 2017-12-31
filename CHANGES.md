@@ -1,5 +1,24 @@
 # homebrew-asterisk
 
+## 2017-12-31
+
+ * Happy New Year!
+ * Update pjsip to 2.7.1
+   * Update to srtp2; add libgsm and libxml2 dependencies
+   * Increase `PJSIP_MAX_PKT_LEN`, based on header from Asterisk's self
+     build
+ * Update asterisk to 15.1.5
+   * Update devel build to the 15 branch
+   * Tons of patches to get things building
+   * Update to srtp2; add libgsm and libxml2 dependencies
+   * Default compiler to clang, since GCC is now causing problems
+ * Fixes for Travis CI
+   * Add clang build for xcode9.2. Keeping xcode8.3, since GCC isn't working
+     with the Xcode 9.2 headers
+     (see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82200)
+   * When tapping, check out the branch, so we build the latests PJSIP with
+     Asterisk
+
 ## 2017-08-13
 
  * Add `--without-pjproject-bundled` configure flag. The default changed in
