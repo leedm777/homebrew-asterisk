@@ -103,6 +103,7 @@ class Asterisk < Formula
 
   depends_on "jansson"
   depends_on "libgsm"
+  depends_on "libxml2"
   depends_on "openssl"
   depends_on "pjsip-asterisk"
   depends_on "speex"
