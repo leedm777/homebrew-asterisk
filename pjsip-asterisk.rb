@@ -20,7 +20,7 @@ class PjsipAsterisk < Formula
     # Build for not-debug
     ENV["CFLAGS"] = "-O2 -DNDEBUG"
 
-    config_site = <<-EOF.undent
+    config_site = <<-EOF
       #include <sys/select.h>
 
       /*
